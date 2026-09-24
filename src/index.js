@@ -1,42 +1,575 @@
-const TELEGRAM_API = (token) => `https://api.telegram.org/bot${token}`;
+const DEFAULT_SYSTEM_PROMPT = `
+You are a professional image-editing prompt engineer and visual reference analyst.
 
-const SYSTEM_PROMPT = `You are a professional image-editing prompt engineer and visual reference analyst.
+The user communicates in Indonesian. Understand the user's Indonesian instructions naturally, but ALWAYS write the final image-editing prompt in English.
 
-Analyze the supplied reference image and the user's requested transformation, then produce ONE detailed prompt for an image-generation or image-editing model.
+Your task:
+1. Analyze the supplied reference image.
+2. Understand exactly what the user wants to change.
+3. Identify visual elements that should remain unchanged.
+4. Produce ONE highly detailed English prompt suitable for a high-quality image-editing/generation model.
 
-Core rule: separate what must be PRESERVED from what must CHANGE. Preserve only details actually visible or explicitly requested. Never invent identity details that cannot reasonably be observed. If the user says something should remain unchanged, explicitly reinforce that constraint. If the user asks for a pose/camera/composition change, describe the new pose and camera precisely without accidentally changing unrelated elements.
+Preserve relevant visible details unless the user explicitly asks to change them.
 
-Analyze when visible/relevant: subject identity/visual appearance, face and hairstyle, skin tone, clothing/colors, body proportions/silhouette, environment/background, furniture/objects, lighting, current composition, requested pose, camera angle/height/distance/framing, expression/gaze, realism/anatomical coherence.
+Pay close attention to:
+- subject identity and recognizable facial characteristics
+- face, hairstyle, hair color and skin tone
+- clothing, clothing colors, materials and accessories
+- body proportions and overall silhouette
+- pose and body positioning
+- hands, arms, legs and anatomical relationships
+- environment and background
+- furniture and important objects
+- lighting, shadows and atmosphere
+- camera angle, camera height and perspective
+- framing and composition
+- facial expression and gaze
+- realism and anatomical coherence
 
-Output ONLY the final image prompt. Do not explain your analysis or mention that you are an AI. Write detailed natural English suitable for a high-quality image model.`;
+When the user requests a pose, camera or composition change, describe the new state precisely while keeping unrelated elements consistent.
 
-function jsonResponse(data, status = 200) { return new Response(JSON.stringify(data), {status, headers:{"content-type":"application/json;charset=UTF-8"}}); }
-async function telegram(token, method, body) { const r=await fetch(`${TELEGRAM_API(token)}/${method}`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); return r.json(); }
-async function sendMessage(env, chatId, text) {
-  for (let i=0;i<text.length;i+=3900) await telegram(env.TELEGRAM_BOT_TOKEN,"sendMessage",{chat_id:chatId,text:text.slice(i,i+3900)});
+Do not invent unnecessary identity details that cannot be reliably observed from the reference image.
+
+Do not mention that you are an AI.
+Do not explain your analysis.
+Do not use headings such as "Analysis", "Preserve", or "Changes".
+Do not output multiple alternatives.
+
+Output ONLY the final English image-editing prompt.
+`;
+
+const MAX_TELEGRAM_MESSAGE = 3900;
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (request.method === "GET" && url.pathname === "/") {
+      return new Response("Prompt Vision Bot is running.", {
+        status: 200,
+        headers: { "content-type": "text/plain;charset=UTF-8" }
+      });
+    }
+
+    if (request.method === "GET" && url.pathname === "/health") {
+      return Response.json({
+        ok: true,
+        model: env.JEROUTER_MODEL || "qwen3.8-max",
+        kv: !!env.SESSION_KV
+      });
+    }
+
+    if (request.method === "POST" && url.pathname === "/telegram/webhook") {
+      try {
+        const update = await request.json();
+        await handleTelegramUpdate(update, env);
+
+        return new Response("OK", { status: 200 });
+      } catch (error) {
+        console.error("WEBHOOK_ERROR", error);
+
+        return new Response("OK", { status: 200 });
+      }
+    }
+
+    return new Response("Not found", { status: 404 });
+  }
+};
+
+async function handleTelegramUpdate(update, env) {
+  const message = update?.message;
+
+  if (!message) {
+    console.log("NO_MESSAGE");
+    return;
+  }
+
+  const chatId = message.chat?.id;
+
+  if (!chatId) {
+    console.log("NO_CHAT_ID");
+    return;
+  }
+
+  // /start
+  if (typeof message.text === "string" && message.text.startsWith("/start")) {
+    await telegramSendMessage(
+      env,
+      chatId,
+      "👋 Welcome to Prompt Vision Bot!\n\n" +
+      "Send a reference photo, then send your instructions in Indonesian.\n\n" +
+      "I will analyze the image and generate a detailed English image-editing prompt."
+    );
+
+    console.log("START_RECEIVED", chatId);
+    return;
+  }
+
+  // /help
+  if (typeof message.text === "string" && message.text.startsWith("/help")) {
+    await telegramSendMessage(
+      env,
+      chatId,
+      "📖 How to use:\n\n" +
+      "1. Send a reference photo.\n" +
+      "2. Send your instructions in Indonesian.\n" +
+      "3. I will generate one detailed English prompt.\n\n" +
+      "You can also send the photo with the instruction as its caption."
+    );
+
+    console.log("HELP_RECEIVED", chatId);
+    return;
+  }
+
+  // PHOTO
+  if (Array.isArray(message.photo) && message.photo.length > 0) {
+    const largestPhoto = message.photo[message.photo.length - 1];
+    const fileId = largestPhoto.file_id;
+
+    console.log("PHOTO_RECEIVED", {
+      chatId,
+      fileIdPresent: !!fileId,
+      captionPresent: !!message.caption
+    });
+
+    // Photo + caption = process immediately
+    if (typeof message.caption === "string" && message.caption.trim()) {
+      await processImageInstruction(
+        env,
+        chatId,
+        fileId,
+        message.caption.trim()
+      );
+
+      return;
+    }
+
+    // Photo only = save for next instruction
+    if (!env.SESSION_KV) {
+      console.error("SESSION_KV_MISSING");
+
+      await telegramSendMessage(
+        env,
+        chatId,
+        "❌ Session storage is not configured."
+      );
+
+      return;
+    }
+
+    const key = `pending:${chatId}`;
+
+    try {
+      await env.SESSION_KV.put(
+        key,
+        JSON.stringify({
+          fileId,
+          createdAt: Date.now()
+        }),
+        {
+          expirationTtl: 1800
+        }
+      );
+
+      console.log("SESSION_SAVED", {
+        chatId,
+        key
+      });
+
+      await telegramSendMessage(
+        env,
+        chatId,
+        "✅ Reference photo received.\n\nNow send your instructions in Indonesian."
+      );
+    } catch (error) {
+      console.error("SESSION_SAVE_ERROR", error);
+
+      await telegramSendMessage(
+        env,
+        chatId,
+        "❌ I couldn't save the reference photo. Please try again."
+      );
+    }
+
+    return;
+  }
+
+  // TEXT INSTRUCTION
+  if (typeof message.text === "string" && message.text.trim()) {
+    const instruction = message.text.trim();
+
+    console.log("INSTRUCTION_RECEIVED", {
+      chatId,
+      length: instruction.length
+    });
+
+    if (!env.SESSION_KV) {
+      console.error("SESSION_KV_MISSING");
+
+      await telegramSendMessage(
+        env,
+        chatId,
+        "❌ Session storage is not configured."
+      );
+
+      return;
+    }
+
+    const key = `pending:${chatId}`;
+
+    let pending;
+
+    try {
+      const raw = await env.SESSION_KV.get(key);
+
+      if (!raw) {
+        console.log("SESSION_MISSING", {
+          chatId,
+          key
+        });
+
+        await telegramSendMessage(
+          env,
+          chatId,
+          "📷 Kirim foto referensi terlebih dahulu, lalu tulis instruksi perubahan."
+        );
+
+        return;
+      }
+
+      pending = JSON.parse(raw);
+
+      console.log("SESSION_FOUND", {
+        chatId,
+        key,
+        fileIdPresent: !!pending?.fileId
+      });
+    } catch (error) {
+      console.error("SESSION_GET_ERROR", error);
+
+      await telegramSendMessage(
+        env,
+        chatId,
+        "❌ I couldn't retrieve your reference photo. Please send the photo again."
+      );
+
+      return;
+    }
+
+    if (!pending?.fileId) {
+      console.error("SESSION_INVALID", {
+        chatId
+      });
+
+      await telegramSendMessage(
+        env,
+        chatId,
+        "❌ Your reference photo session is invalid. Please send the photo again."
+      );
+
+      return;
+    }
+
+    await processImageInstruction(
+      env,
+      chatId,
+      pending.fileId,
+      instruction
+    );
+
+    try {
+      await env.SESSION_KV.delete(key);
+      console.log("SESSION_DELETED", {
+        chatId,
+        key
+      });
+    } catch (error) {
+      console.error("SESSION_DELETE_ERROR", error);
+    }
+
+    return;
+  }
+
+  console.log("UNSUPPORTED_MESSAGE", chatId);
 }
-async function getTelegramFileUrl(env,fileId){ const x=await telegram(env.TELEGRAM_BOT_TOKEN,"getFile",{file_id:fileId}); if(!x.ok||!x.result?.file_path) throw new Error("Telegram getFile failed."); return `https://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${x.result.file_path}`; }
-function base64(buffer){ const bytes=new Uint8Array(buffer); let out=""; for(let i=0;i<bytes.length;i+=0x8000) out+=String.fromCharCode(...bytes.subarray(i,Math.min(i+0x8000,bytes.length))); return btoa(out); }
-async function imageToDataUrl(env,fileId){ const r=await fetch(await getTelegramFileUrl(env,fileId)); if(!r.ok) throw new Error("Could not download Telegram image."); const max=Number(env.MAX_IMAGE_BYTES||7000000); const b=await r.arrayBuffer(); if(b.byteLength>max) throw new Error("Image is too large."); return `data:image/jpeg;base64,${base64(b)}`; }
-async function callJerouter(env,image,userInstruction){
-  const endpoint=`${env.JEROUTER_BASE_URL.replace(/\/$/,"")}/chat/completions`;
-  const payload={model:env.JEROUTER_MODEL||"qwen3.8-max",temperature:Number(env.TEMPERATURE||0.35),messages:[
-    {role:"system",content:SYSTEM_PROMPT},
-    {role:"user",content:[{type:"text",text:`Reference image is attached. User's requested change:\n${userInstruction}`},{type:"image_url",image_url:{url:image}}]}
-  ]};
-  const r=await fetch(endpoint,{method:"POST",headers:{"content-type":"application/json",authorization:`Bearer ${env.JEROUTER_API_KEY}`},body:JSON.stringify(payload)});
-  const raw=await r.text(); if(!r.ok) throw new Error(`Jerouter HTTP ${r.status}: ${raw.slice(0,500)}`);
-  const d=JSON.parse(raw); const out=d?.choices?.[0]?.message?.content??d?.choices?.[0]?.text??d?.output_text??d?.output;
-  if(!out||typeof out!=="string") throw new Error("Could not find model output in Jerouter response."); return out.trim();
+
+async function processImageInstruction(
+  env,
+  chatId,
+  fileId,
+  instruction
+) {
+  try {
+    await telegramSendMessage(
+      env,
+      chatId,
+      "🔍 Analyzing the reference image and generating your prompt..."
+    );
+
+    console.log("TELEGRAM_FILE_REQUEST", {
+      chatId,
+      fileIdPresent: !!fileId
+    });
+
+    const imageDataUrl = await downloadTelegramImage(
+      env,
+      fileId
+    );
+
+    console.log("TELEGRAM_FILE_DOWNLOADED", {
+      chatId,
+      bytes: imageDataUrl.length
+    });
+
+    console.log("JEROUTER_REQUEST", {
+      chatId,
+      model: env.JEROUTER_MODEL || "qwen3.8-max"
+    });
+
+    const prompt = await callJerouter(
+      env,
+      imageDataUrl,
+      instruction
+    );
+
+    console.log("JEROUTER_RESPONSE", {
+      chatId,
+      length: prompt.length
+    });
+
+    await sendLongTelegramMessage(
+      env,
+      chatId,
+      prompt
+    );
+  } catch (error) {
+    console.error("IMAGE_PROCESSING_ERROR", error);
+
+    await telegramSendMessage(
+      env,
+      chatId,
+      `❌ Failed to generate the prompt.\n\nError: ${error.message}`
+    );
+  }
 }
-async function savePending(env,chatId,fileId){ if(env.SESSION_KV) await env.SESSION_KV.put(`pending:${chatId}`,JSON.stringify({fileId,createdAt:Date.now()}),{expirationTtl:1800}); }
-async function getPending(env,chatId){ if(!env.SESSION_KV)return null; const r=await env.SESSION_KV.get(`pending:${chatId}`); if(!r)return null; try{return JSON.parse(r)}catch{return null;} }
-async function clearPending(env,chatId){if(env.SESSION_KV)await env.SESSION_KV.delete(`pending:${chatId}`);}
-async function handleUpdate(u,env){
-  const m=u?.message;if(!m?.chat?.id)return; const chatId=m.chat.id; const text=(m.text||"").trim();
-  if(text==="/start"){await sendMessage(env,chatId,"🧠 Prompt Vision Bot\n\nKirim foto referensi + instruksi perubahan.\n\nBisa kirim foto dengan caption, atau foto dulu lalu instruksi di pesan berikutnya.\n\nContoh: Ubah pose, tetapi orang, outfit, background, dan lighting tetap sama.");return;}
-  if(text==="/help"){await sendMessage(env,chatId,"📖 Cara pakai\n\n1. Kirim foto + caption instruksi, atau\n2. Kirim foto dulu, lalu instruksi teks.\n\nBot membaca reference image lalu membuat prompt edit detail.");return;}
-  if(m.photo?.length){ const p=m.photo[m.photo.length-1], ins=(m.caption||"").trim(); await savePending(env,chatId,p.file_id); if(!ins){await sendMessage(env,chatId,"📸 Reference diterima.\n\nSekarang kirim instruksi perubahan.");return;} await sendMessage(env,chatId,"🔎 Menganalisis reference dan menyusun prompt..."); try{const result=await callJerouter(env,await imageToDataUrl(env,p.file_id),ins);await clearPending(env,chatId);await sendMessage(env,chatId,`✨ GENERATED PROMPT\n\n${result}`);}catch(e){await sendMessage(env,chatId,`❌ Gagal memproses gambar.\n\n${e.message}`);}return; }
-  if(text&&!text.startsWith("/")){const p=await getPending(env,chatId);if(!p?.fileId){await sendMessage(env,chatId,"Kirim foto referensi terlebih dahulu, lalu tulis instruksi perubahan.");return;}await sendMessage(env,chatId,"🔎 Menganalisis reference dan menyusun prompt...");try{const result=await callJerouter(env,await imageToDataUrl(env,p.fileId),text);await clearPending(env,chatId);await sendMessage(env,chatId,`✨ GENERATED PROMPT\n\n${result}`);}catch(e){await sendMessage(env,chatId,`❌ Gagal memproses.\n\n${e.message}`);}}
+
+async function telegramApi(env, method, body) {
+  const token = env.TELEGRAM_BOT_TOKEN;
+
+  if (!token) {
+    throw new Error("TELEGRAM_BOT_TOKEN is missing");
+  }
+
+  const response = await fetch(
+    `https://api.telegram.org/bot${token}/${method}`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+      body: JSON.stringify(body)
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok || !data.ok) {
+    throw new Error(
+      `Telegram ${method} failed: ${JSON.stringify(data)}`
+    );
+  }
+
+  return data;
 }
-export default {async fetch(request,env,ctx){const url=new URL(request.url);if(request.method==="GET"&&url.pathname==="/")return new Response("Prompt Vision Bot is running.");if(request.method==="GET"&&url.pathname==="/health")return jsonResponse({ok:true,model:env.JEROUTER_MODEL||"qwen3.8-max"});if(request.method==="POST"&&url.pathname==="/telegram/webhook"){const u=await request.json();ctx.waitUntil(handleUpdate(u,env));return new Response("OK");}return new Response("Not found",{status:404});}};
+
+async function telegramSendMessage(env, chatId, text) {
+  return telegramApi(env, "sendMessage", {
+    chat_id: chatId,
+    text
+  });
+}
+
+async function sendLongTelegramMessage(env, chatId, text) {
+  const chunks = [];
+
+  for (
+    let i = 0;
+    i < text.length;
+    i += MAX_TELEGRAM_MESSAGE
+  ) {
+    chunks.push(text.slice(i, i + MAX_TELEGRAM_MESSAGE));
+  }
+
+  for (const chunk of chunks) {
+    await telegramSendMessage(env, chatId, chunk);
+  }
+}
+
+async function downloadTelegramImage(env, fileId) {
+  const fileData = await telegramApi(env, "getFile", {
+    file_id: fileId
+  });
+
+  const filePath = fileData?.result?.file_path;
+
+  if (!filePath) {
+    throw new Error("Telegram did not return a file path");
+  }
+
+  const imageResponse = await fetch(
+    `https://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${filePath}`
+  );
+
+  if (!imageResponse.ok) {
+    throw new Error(
+      `Telegram image download failed: HTTP ${imageResponse.status}`
+    );
+  }
+
+  const contentLength = Number(
+    imageResponse.headers.get("content-length") || 0
+  );
+
+  const maxBytes = Number(
+    env.MAX_IMAGE_BYTES || 7000000
+  );
+
+  if (contentLength > maxBytes) {
+    throw new Error("Image is too large");
+  }
+
+  const arrayBuffer = await imageResponse.arrayBuffer();
+
+  if (arrayBuffer.byteLength > maxBytes) {
+    throw new Error("Image is too large");
+  }
+
+  const contentType =
+    imageResponse.headers.get("content-type") ||
+    "image/jpeg";
+
+  const base64 = arrayBufferToBase64(arrayBuffer);
+
+  return `data:${contentType};base64,${base64}`;
+}
+
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+
+  let binary = "";
+
+  const chunkSize = 0x8000;
+
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(
+      i,
+      Math.min(i + chunkSize, bytes.length)
+    );
+
+    binary += String.fromCharCode(...chunk);
+  }
+
+  return btoa(binary);
+}
+
+async function callJerouter(
+  env,
+  imageDataUrl,
+  instruction
+) {
+  const baseUrl =
+    env.JEROUTER_BASE_URL ||
+    "https://je.jerouter.web.id/v1";
+
+  const model =
+    env.JEROUTER_MODEL ||
+    "qwen3.8-max";
+
+  const apiKey = env.JEROUTER_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("JEROUTER_API_KEY is missing");
+  }
+
+  const response = await fetch(
+    `${baseUrl.replace(/\/$/, "")}/chat/completions`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model,
+        temperature: Number(
+          env.TEMPERATURE || 0.35
+        ),
+        messages: [
+          {
+            role: "system",
+            content: DEFAULT_SYSTEM_PROMPT
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text:
+                  `User instruction (Indonesian):\n${instruction}\n\n` +
+                  "Understand this instruction in Indonesian and generate the final image-editing prompt in English."
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: imageDataUrl
+                }
+              }
+            ]
+          }
+        ]
+      })
+    }
+  );
+
+  const rawText = await response.text();
+
+  let data;
+
+  try {
+    data = JSON.parse(rawText);
+  } catch {
+    throw new Error(
+      `Jerouter returned non-JSON response: ${rawText.slice(0, 500)}`
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `Jerouter HTTP ${response.status}: ${JSON.stringify(data)}`
+    );
+  }
+
+  const content =
+    data?.choices?.[0]?.message?.content ??
+    data?.choices?.[0]?.text ??
+    data?.output_text ??
+    data?.output;
+
+  if (!content) {
+    throw new Error(
+      `Jerouter returned no text content: ${JSON.stringify(data).slice(0, 1000)}`
+    );
+  }
+
+  if (Array.isArray(content)) {
+    return content
+      .map((item) => {
+        if (typeof item === "string") return item;
+        return item?.text || "";
+      })
+      .join("")
+      .trim();
+  }
+
+  return String(content).trim();
+}
