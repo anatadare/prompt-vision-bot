@@ -39,10 +39,80 @@ Output ONLY the final English image-editing prompt.
 `;
 
 const MAX_TELEGRAM_MESSAGE = 3900;
+const PENDING_TTL_MS = 30 * 60 * 1000; // 30 menit, sama seperti TTL KV sebelumnya
 
-// Toleran terhadap nama binding KV (SESSION_KV atau prompt-vision-session)
-function getKV(env) {
-  return env.SESSION_KV || env["prompt-vision-session"];
+// Durable Object: menyimpan sesi "foto menunggu instruksi" per chatId.
+// Satu instance DO per chatId menangani semua request secara sekuensial,
+// jadi baca-setelah-tulis selalu konsisten (tidak ada lagi race/propagation
+// delay seperti pada Cloudflare KV).
+export class ChatSession {
+  constructor(state) {
+    this.state = state;
+  }
+
+  async fetch(request) {
+    if (request.method === "PUT") {
+      const body = await request.json();
+      await this.state.storage.put("pending", body);
+      return new Response("OK");
+    }
+
+    if (request.method === "GET") {
+      const pending = await this.state.storage.get("pending");
+
+      if (pending && Date.now() - pending.createdAt > PENDING_TTL_MS) {
+        await this.state.storage.delete("pending");
+        return Response.json({ pending: null });
+      }
+
+      return Response.json({ pending: pending || null });
+    }
+
+    if (request.method === "DELETE") {
+      await this.state.storage.delete("pending");
+      return new Response("OK");
+    }
+
+    return new Response("Not found", { status: 404 });
+  }
+}
+
+// Ambil stub Durable Object untuk chat tertentu
+function getChatSessionStub(env, chatId) {
+  if (!env.CHAT_SESSION) return null;
+  const id = env.CHAT_SESSION.idFromName(String(chatId));
+  return env.CHAT_SESSION.get(id);
+}
+
+async function sessionSavePending(env, chatId, fileId) {
+  const stub = getChatSessionStub(env, chatId);
+  if (!stub) throw new Error("CHAT_SESSION binding is missing");
+
+  await stub.fetch("https://chat-session/pending", {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ fileId, createdAt: Date.now() })
+  });
+}
+
+async function sessionGetPending(env, chatId) {
+  const stub = getChatSessionStub(env, chatId);
+  if (!stub) throw new Error("CHAT_SESSION binding is missing");
+
+  const res = await stub.fetch("https://chat-session/pending", {
+    method: "GET"
+  });
+  const data = await res.json();
+  return data.pending || null;
+}
+
+async function sessionDeletePending(env, chatId) {
+  const stub = getChatSessionStub(env, chatId);
+  if (!stub) return;
+
+  await stub.fetch("https://chat-session/pending", {
+    method: "DELETE"
+  });
 }
 
 // Ambil file_id gambar dari sebuah message (photo atau document bergambar)
@@ -53,16 +123,6 @@ function extractFileId(msg) {
   }
   if (msg.document?.mime_type?.startsWith("image/")) {
     return msg.document.file_id;
-  }
-  return null;
-}
-
-// KV bersifat eventually consistent antar lokasi edge, jadi baca dicoba beberapa kali
-async function kvGetWithRetry(kv, key, tries = 4, delayMs = 800) {
-  for (let i = 0; i < tries; i++) {
-    const raw = await kv.get(key, { cacheTtl: 30 });
-    if (raw) return raw;
-    if (i < tries - 1) await new Promise((r) => setTimeout(r, delayMs));
   }
   return null;
 }
@@ -82,7 +142,7 @@ export default {
       return Response.json({
         ok: true,
         model: env.JEROUTER_MODEL || "qwen3.8-max",
-        kv: !!getKV(env)
+        chatSession: !!env.CHAT_SESSION
       });
     }
 
@@ -148,8 +208,6 @@ async function handleTelegramUpdate(update, env) {
     return;
   }
 
-  const kv = getKV(env);
-
   // PHOTO
   const photoFileId = extractFileId(message);
   if (photoFileId) {
@@ -174,36 +232,10 @@ async function handleTelegramUpdate(update, env) {
     }
 
     // Photo only = save for next instruction
-    if (!kv) {
-      console.error("SESSION_KV_MISSING");
-
-      await telegramSendMessage(
-        env,
-        chatId,
-        "❌ Session storage is not configured."
-      );
-
-      return;
-    }
-
-    const key = `pending:${chatId}`;
-
     try {
-      await kv.put(
-        key,
-        JSON.stringify({
-          fileId,
-          createdAt: Date.now()
-        }),
-        {
-          expirationTtl: 1800
-        }
-      );
+      await sessionSavePending(env, chatId, fileId);
 
-      console.log("SESSION_SAVED", {
-        chatId,
-        key
-      });
+      console.log("SESSION_SAVED", { chatId });
 
       await telegramSendMessage(
         env,
@@ -239,27 +271,13 @@ async function handleTelegramUpdate(update, env) {
       return;
     }
 
-    if (!kv) {
-      console.error("SESSION_KV_MISSING");
-
-      await telegramSendMessage(
-        env,
-        chatId,
-        "❌ Session storage is not configured."
-      );
-
-      return;
-    }
-
-    const key = `pending:${chatId}`;
-
     let pending;
 
     try {
-      const raw = await kvGetWithRetry(kv, key);
+      pending = await sessionGetPending(env, chatId);
 
-      if (!raw) {
-        console.log("SESSION_MISSING", { chatId, key });
+      if (!pending) {
+        console.log("SESSION_MISSING", { chatId });
 
         await telegramSendMessage(
           env,
@@ -271,11 +289,8 @@ async function handleTelegramUpdate(update, env) {
         return;
       }
 
-      pending = JSON.parse(raw);
-
       console.log("SESSION_FOUND", {
         chatId,
-        key,
         fileIdPresent: !!pending?.fileId
       });
     } catch (error) {
@@ -310,11 +325,8 @@ async function handleTelegramUpdate(update, env) {
     );
 
     try {
-      await kv.delete(key);
-      console.log("SESSION_DELETED", {
-        chatId,
-        key
-      });
+      await sessionDeletePending(env, chatId);
+      console.log("SESSION_DELETED", { chatId });
     } catch (error) {
       console.error("SESSION_DELETE_ERROR", error);
     }
