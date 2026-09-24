@@ -154,6 +154,8 @@ Pending images expire after 30 minutes.
 | `JEROUTER_MODEL` | `wrangler.toml` | Vision model name |
 | `TEMPERATURE` | `wrangler.toml` | LLM temperature |
 | `MAX_IMAGE_BYTES` | `wrangler.toml` | Maximum downloaded image size |
+| `MIN_PROMPT_WORDS` | `wrangler.toml` | Minimum words in the generated prompt (default 250) |
+| `MAX_PROMPT_WORDS` | `wrangler.toml` | Maximum words in the generated prompt (default 500) |
 | `SESSION_KV` | `wrangler.toml` | Temporary image-session storage |
 
 ## Notes
