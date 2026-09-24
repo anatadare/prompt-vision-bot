@@ -500,13 +500,32 @@ async function downloadTelegramImage(env, fileId) {
     throw new Error("Image is too large");
   }
 
-  const contentType =
-    imageResponse.headers.get("content-type") ||
-    "image/jpeg";
+  // Jangan percaya header content-type dari Telegram (bisa "application/octet-stream").
+  // Deteksi dari magic bytes supaya data URL selalu valid untuk model vision.
+  const contentType = detectImageMime(
+    arrayBuffer,
+    imageResponse.headers.get("content-type")
+  );
 
   const base64 = arrayBufferToBase64(arrayBuffer);
 
   return `data:${contentType};base64,${base64}`;
+}
+
+function detectImageMime(buffer, headerType) {
+  const b = new Uint8Array(buffer.slice(0, 12));
+
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "image/jpeg";
+  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47) return "image/png";
+  if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return "image/gif";
+  if (
+    b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 &&
+    b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50
+  ) return "image/webp";
+
+  if (headerType && headerType.startsWith("image/")) return headerType;
+
+  return "image/jpeg";
 }
 
 function arrayBufferToBase64(buffer) {
@@ -657,6 +676,15 @@ async function callJerouter(
     );
   }
 
+  const requestBody = { model, messages };
+
+  // TEMPERATURE = "" atau "none" -> parameter temperature tidak dikirim
+  // (beberapa model reasoning menolak parameter ini).
+  const tempRaw = env.TEMPERATURE === undefined ? "0.35" : String(env.TEMPERATURE).trim();
+  if (tempRaw !== "" && tempRaw.toLowerCase() !== "none") {
+    requestBody.temperature = Number(tempRaw);
+  }
+
   const response = await fetch(
     `${baseUrl.replace(/\/$/, "")}/chat/completions`,
     {
@@ -665,13 +693,7 @@ async function callJerouter(
         "content-type": "application/json",
         "authorization": `Bearer ${apiKey}`
       },
-      body: JSON.stringify({
-        model,
-        temperature: Number(
-          env.TEMPERATURE || 0.35
-        ),
-        messages
-      })
+      body: JSON.stringify(requestBody)
     }
   );
 
