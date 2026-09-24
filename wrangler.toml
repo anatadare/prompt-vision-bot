@@ -4,7 +4,7 @@ compatibility_date = "2026-09-24"
 
 [vars]
 JEROUTER_BASE_URL = "https://je.jerouter.web.id/v1"
-JEROUTER_MODEL = "qwen3.8-max"
+JEROUTER_MODEL = "grok-4.7"
 TEMPERATURE = "0.35"
 MAX_IMAGE_BYTES = "7000000"
 MIN_PROMPT_WORDS = "250"
