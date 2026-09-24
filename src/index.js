@@ -30,8 +30,16 @@ When the user requests a pose, camera or composition change, describe the new st
 
 Do not invent unnecessary identity details that cannot be reliably observed from the reference image.
 
+LENGTH REQUIREMENT (strict):
+- The final prompt MUST be written in English and MUST be between 250 and 500 words long.
+- Aim for roughly 350 to 450 words so you stay safely inside the range.
+- Never go below 250 words, even for simple requests. Use the extra space to describe the preserved elements (subject, outfit, environment, lighting, camera, composition) and the requested change in concrete visual detail.
+- Never exceed 500 words. Prioritize the most important details instead of padding.
+- Write it as flowing, well-structured paragraphs of plain text.
+
 Do not mention that you are an AI.
 Do not explain your analysis.
+Do not mention the word count.
 Do not use headings such as "Analysis", "Preserve", or "Changes".
 Do not output multiple alternatives.
 
@@ -39,6 +47,9 @@ Output ONLY the final English image-editing prompt.
 `;
 
 const MAX_TELEGRAM_MESSAGE = 3900;
+const DEFAULT_MIN_WORDS = 250;
+const DEFAULT_MAX_WORDS = 500;
+const MAX_LENGTH_RETRIES = 2;
 const PENDING_TTL_MS = 30 * 60 * 1000; // 30 menit, sama seperti TTL KV sebelumnya
 
 // Durable Object: menyimpan sesi "foto menunggu instruksi" per chatId.
@@ -370,7 +381,7 @@ async function processImageInstruction(
       model: env.JEROUTER_MODEL || "qwen3.8-max"
     });
 
-    const prompt = await callJerouter(
+    const prompt = await generatePromptWithinLimits(
       env,
       imageDataUrl,
       instruction
@@ -378,7 +389,8 @@ async function processImageInstruction(
 
     console.log("JEROUTER_RESPONSE", {
       chatId,
-      length: prompt.length
+      length: prompt.length,
+      words: countWords(prompt)
     });
 
     await sendLongTelegramMessage(
@@ -516,10 +528,88 @@ function arrayBufferToBase64(buffer) {
   return btoa(binary);
 }
 
-async function callJerouter(
+function countWords(text) {
+  const matches = String(text || "").trim().match(/\S+/g);
+  return matches ? matches.length : 0;
+}
+
+// Potong ke batas kata maksimum, usahakan berhenti di akhir kalimat.
+function trimToMaxWords(text, maxWords) {
+  const words = text.trim().split(/\s+/);
+  if (words.length <= maxWords) return text.trim();
+
+  const cut = words.slice(0, maxWords).join(" ");
+  const lastEnd = Math.max(
+    cut.lastIndexOf(". "),
+    cut.lastIndexOf("! "),
+    cut.lastIndexOf("? "),
+    cut.endsWith(".") ? cut.length - 1 : -1
+  );
+
+  // Hanya potong di batas kalimat jika tidak membuang terlalu banyak
+  if (lastEnd > cut.length * 0.7) {
+    return cut.slice(0, lastEnd + 1).trim();
+  }
+
+  return cut.trim();
+}
+
+// Minta model menghasilkan prompt 250-500 kata; retry jika di luar batas.
+async function generatePromptWithinLimits(
   env,
   imageDataUrl,
   instruction
+) {
+  const minWords = Number(env.MIN_PROMPT_WORDS || DEFAULT_MIN_WORDS);
+  const maxWords = Number(env.MAX_PROMPT_WORDS || DEFAULT_MAX_WORDS);
+
+  let feedback = null;
+  let best = null;
+
+  for (let attempt = 0; attempt <= MAX_LENGTH_RETRIES; attempt++) {
+    const prompt = await callJerouter(
+      env,
+      imageDataUrl,
+      instruction,
+      feedback
+    );
+
+    const words = countWords(prompt);
+
+    console.log("PROMPT_WORD_COUNT", { attempt, words });
+
+    if (words >= minWords && words <= maxWords) {
+      return prompt;
+    }
+
+    // Simpan kandidat terdekat dengan rentang sebagai cadangan
+    const distance = words < minWords ? minWords - words : words - maxWords;
+    if (!best || distance < best.distance) {
+      best = { prompt, words, distance };
+    }
+
+    feedback = {
+      previousPrompt: prompt,
+      note:
+        words < minWords
+          ? `Your previous prompt was only ${words} words, which is too short. Rewrite it so it is between ${minWords} and ${maxWords} words (aim for about 400). Add concrete visual detail about preserved elements and the requested change.`
+          : `Your previous prompt was ${words} words, which is too long. Rewrite it so it is between ${minWords} and ${maxWords} words (aim for about 400). Keep the most important details and remove redundancy.`
+    };
+  }
+
+  // Semua percobaan gagal: pakai kandidat terbaik, potong jika kelebihan
+  if (best.words > maxWords) {
+    return trimToMaxWords(best.prompt, maxWords);
+  }
+
+  return best.prompt;
+}
+
+async function callJerouter(
+  env,
+  imageDataUrl,
+  instruction,
+  feedback = null
 ) {
   const baseUrl =
     env.JEROUTER_BASE_URL ||
@@ -535,6 +625,38 @@ async function callJerouter(
     throw new Error("JEROUTER_API_KEY is missing");
   }
 
+  const messages = [
+    {
+      role: "system",
+      content: DEFAULT_SYSTEM_PROMPT
+    },
+    {
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text:
+            `User instruction (Indonesian):\n${instruction}\n\n` +
+            "Understand this instruction in Indonesian and generate the final image-editing prompt in English. " +
+            "The prompt must be between 250 and 500 words."
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: imageDataUrl
+          }
+        }
+      ]
+    }
+  ];
+
+  if (feedback) {
+    messages.push(
+      { role: "assistant", content: feedback.previousPrompt },
+      { role: "user", content: feedback.note + " Output ONLY the rewritten prompt." }
+    );
+  }
+
   const response = await fetch(
     `${baseUrl.replace(/\/$/, "")}/chat/completions`,
     {
@@ -548,29 +670,7 @@ async function callJerouter(
         temperature: Number(
           env.TEMPERATURE || 0.35
         ),
-        messages: [
-          {
-            role: "system",
-            content: DEFAULT_SYSTEM_PROMPT
-          },
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text:
-                  `User instruction (Indonesian):\n${instruction}\n\n` +
-                  "Understand this instruction in Indonesian and generate the final image-editing prompt in English."
-              },
-              {
-                type: "image_url",
-                image_url: {
-                  url: imageDataUrl
-                }
-              }
-            ]
-          }
-        ]
+        messages
       })
     }
   );
