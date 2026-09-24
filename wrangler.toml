@@ -9,5 +9,5 @@ TEMPERATURE = "0.35"
 MAX_IMAGE_BYTES = "7000000"
 
 [[kv_namespaces]]
-binding = "SESSION_KV"
-id = "YOUR_KV_NAMESPACE_ID"
+binding = "prompt-vision-session"
+id = "c9d40264336b46ec9be3a1ae8341f036"
