@@ -3,7 +3,7 @@ main = "src/index.js"
 compatibility_date = "2026-09-24"
 
 [vars]
-JEROUTER_BASE_URL = "https://YOUR-JEROUTER-ENDPOINT/v1"
+JEROUTER_BASE_URL = "https://je.jerouter.web.id/v1"
 JEROUTER_MODEL = "qwen3.8-max"
 TEMPERATURE = "0.35"
 MAX_IMAGE_BYTES = "7000000"
