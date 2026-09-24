@@ -40,6 +40,33 @@ Output ONLY the final English image-editing prompt.
 
 const MAX_TELEGRAM_MESSAGE = 3900;
 
+// Toleran terhadap nama binding KV (SESSION_KV atau prompt-vision-session)
+function getKV(env) {
+  return env.SESSION_KV || env["prompt-vision-session"];
+}
+
+// Ambil file_id gambar dari sebuah message (photo atau document bergambar)
+function extractFileId(msg) {
+  if (!msg) return null;
+  if (Array.isArray(msg.photo) && msg.photo.length > 0) {
+    return msg.photo[msg.photo.length - 1].file_id;
+  }
+  if (msg.document?.mime_type?.startsWith("image/")) {
+    return msg.document.file_id;
+  }
+  return null;
+}
+
+// KV bersifat eventually consistent antar lokasi edge, jadi baca dicoba beberapa kali
+async function kvGetWithRetry(kv, key, tries = 4, delayMs = 800) {
+  for (let i = 0; i < tries; i++) {
+    const raw = await kv.get(key, { cacheTtl: 30 });
+    if (raw) return raw;
+    if (i < tries - 1) await new Promise((r) => setTimeout(r, delayMs));
+  }
+  return null;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -55,7 +82,7 @@ export default {
       return Response.json({
         ok: true,
         model: env.JEROUTER_MODEL || "qwen3.8-max",
-        kv: !!env.SESSION_KV
+        kv: !!getKV(env)
       });
     }
 
@@ -121,10 +148,12 @@ async function handleTelegramUpdate(update, env) {
     return;
   }
 
+  const kv = getKV(env);
+
   // PHOTO
-  if (Array.isArray(message.photo) && message.photo.length > 0) {
-    const largestPhoto = message.photo[message.photo.length - 1];
-    const fileId = largestPhoto.file_id;
+  const photoFileId = extractFileId(message);
+  if (photoFileId) {
+    const fileId = photoFileId;
 
     console.log("PHOTO_RECEIVED", {
       chatId,
@@ -145,7 +174,7 @@ async function handleTelegramUpdate(update, env) {
     }
 
     // Photo only = save for next instruction
-    if (!env.SESSION_KV) {
+    if (!kv) {
       console.error("SESSION_KV_MISSING");
 
       await telegramSendMessage(
@@ -160,7 +189,7 @@ async function handleTelegramUpdate(update, env) {
     const key = `pending:${chatId}`;
 
     try {
-      await env.SESSION_KV.put(
+      await kv.put(
         key,
         JSON.stringify({
           fileId,
@@ -203,7 +232,14 @@ async function handleTelegramUpdate(update, env) {
       length: instruction.length
     });
 
-    if (!env.SESSION_KV) {
+    // Jalur 1: user me-reply foto -> tidak butuh storage sama sekali
+    const repliedFileId = extractFileId(message.reply_to_message);
+    if (repliedFileId) {
+      await processImageInstruction(env, chatId, repliedFileId, instruction);
+      return;
+    }
+
+    if (!kv) {
       console.error("SESSION_KV_MISSING");
 
       await telegramSendMessage(
@@ -220,18 +256,16 @@ async function handleTelegramUpdate(update, env) {
     let pending;
 
     try {
-      const raw = await env.SESSION_KV.get(key);
+      const raw = await kvGetWithRetry(kv, key);
 
       if (!raw) {
-        console.log("SESSION_MISSING", {
-          chatId,
-          key
-        });
+        console.log("SESSION_MISSING", { chatId, key });
 
         await telegramSendMessage(
           env,
           chatId,
-          "📷 Kirim foto referensi terlebih dahulu, lalu tulis instruksi perubahan."
+          "📷 Kirim foto referensi terlebih dahulu, lalu tulis instruksi perubahan.\n\n" +
+          "Tip: kamu juga bisa me-reply foto yang sudah dikirim dengan instruksimu."
         );
 
         return;
@@ -257,9 +291,7 @@ async function handleTelegramUpdate(update, env) {
     }
 
     if (!pending?.fileId) {
-      console.error("SESSION_INVALID", {
-        chatId
-      });
+      console.error("SESSION_INVALID", { chatId });
 
       await telegramSendMessage(
         env,
@@ -278,7 +310,7 @@ async function handleTelegramUpdate(update, env) {
     );
 
     try {
-      await env.SESSION_KV.delete(key);
+      await kv.delete(key);
       console.log("SESSION_DELETED", {
         chatId,
         key
