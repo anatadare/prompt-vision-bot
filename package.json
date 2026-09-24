@@ -1,0 +1,14 @@
+{
+  "name": "prompt-vision-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Telegram bot that turns a reference image and user instruction into a detailed image-editing prompt using a vision LLM.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "check": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "latest"
+  }
+}
