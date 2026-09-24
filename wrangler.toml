@@ -7,6 +7,8 @@ JEROUTER_BASE_URL = "https://je.jerouter.web.id/v1"
 JEROUTER_MODEL = "qwen3.8-max"
 TEMPERATURE = "0.35"
 MAX_IMAGE_BYTES = "7000000"
+MIN_PROMPT_WORDS = "250"
+MAX_PROMPT_WORDS = "500"
 
 [[durable_objects.bindings]]
 name = "CHAT_SESSION"
