@@ -8,6 +8,10 @@ JEROUTER_MODEL = "qwen3.8-max"
 TEMPERATURE = "0.35"
 MAX_IMAGE_BYTES = "7000000"
 
-[[kv_namespaces]]
-binding = "SESSION_KV"
-id = "c9d40264336b46ec9be3a1ae8341f036"
+[[durable_objects.bindings]]
+name = "CHAT_SESSION"
+class_name = "ChatSession"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ChatSession"]
