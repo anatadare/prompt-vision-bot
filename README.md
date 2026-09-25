@@ -157,6 +157,18 @@ Pending images expire after 30 minutes.
 | `MIN_PROMPT_WORDS` | `wrangler.toml` | Minimum words in the generated prompt (default 250) |
 | `MAX_PROMPT_WORDS` | `wrangler.toml` | Maximum words in the generated prompt (default 500) |
 | `MAX_IMAGES_PER_SCENE` | `wrangler.toml` | Maximum number of reference photos accepted for one scene (default 5) |
+
+### Negative prompt
+
+Every generated prompt now includes a negative prompt section appended after the main prompt:
+
+```
+<main prompt, 250-500 words>
+
+Negative prompt: distorted body proportions, extra fingers, deformed hands, ...
+```
+
+The negative prompt is a short comma-separated list (not counted toward the 250-500 word limit) that always guards against bad anatomy/proportions and against drifting away from what the main prompt describes (identity, outfit, environment, pose). It always refers back to the main prompt rather than introducing new ideas.
 | `SESSION_KV` | `wrangler.toml` | Temporary image-session storage |
 
 ## Notes
