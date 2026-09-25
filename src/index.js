@@ -45,12 +45,25 @@ When the user requests a pose, camera or composition change, describe the new st
 
 Do not invent unnecessary identity details that cannot be reliably observed from the reference image.
 
-LENGTH REQUIREMENT (strict):
-- The final prompt MUST be written in English and MUST be between 250 and 500 words long.
+LENGTH REQUIREMENT (strict, applies to the MAIN PROMPT only):
+- The main prompt MUST be written in English and MUST be between 250 and 500 words long.
 - Aim for roughly 350 to 450 words so you stay safely inside the range.
 - Never go below 250 words, even for simple requests. Use the extra space to describe the preserved elements (subject, outfit, environment, lighting, camera, composition) and the requested change in concrete visual detail.
 - Never exceed 500 words. Prioritize the most important details instead of padding.
 - Write it as flowing, well-structured paragraphs of plain text.
+
+NEGATIVE PROMPT REQUIREMENT (strict):
+After the main prompt, you must also produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-generation model must avoid, so the output does not drift away from what the main prompt describes.
+- It must always include anatomy/proportion safeguards: distorted body proportions, disproportionate limbs, extra or missing fingers, extra or missing limbs, malformed hands, fused fingers, asymmetrical or unnatural anatomy, deformed face, mutated body parts, unnatural body scaling.
+- It must always include general quality/consistency safeguards: inconsistent with reference, changed identity, changed outfit not requested, changed background not requested, changed pose not requested, low quality, blurry, distorted, watermark, text, signature, extra objects, duplicate subject, cropped body parts, unrealistic lighting, mismatched perspective.
+- The negative prompt must stay consistent with and refer back to the main prompt — it exists to lock in what the main prompt already describes (the subject, outfit, environment, pose, proportions), not to introduce new ideas or contradict the main prompt.
+- Do not turn the negative prompt into a sentence or explanation. It is a flat comma-separated list of short terms.
+- The negative prompt does not count toward the 250-500 word limit above; keep it concise, typically 25 to 60 words.
+
+OUTPUT FORMAT (strict):
+Output exactly two parts, nothing else:
+1. The main prompt (250-500 words), as plain paragraphs.
+2. A blank line, then a line that starts exactly with "Negative prompt:" followed by the comma-separated negative prompt on the same line.
 
 Do not mention that you are an AI.
 Do not explain your analysis.
@@ -58,7 +71,7 @@ Do not mention the word count.
 Do not use headings such as "Analysis", "Preserve", or "Changes".
 Do not output multiple alternatives.
 
-Output ONLY the final English image-editing prompt.
+Output ONLY the main prompt followed by the "Negative prompt:" line as described above — nothing before, nothing after.
 `;
 
 const MAX_TELEGRAM_MESSAGE = 3900;
@@ -631,6 +644,30 @@ function countWords(text) {
   return matches ? matches.length : 0;
 }
 
+// Pisahkan output model jadi { main, negative }.
+// Model diinstruksikan selalu mengakhiri dengan baris "Negative prompt: ...".
+// Kalau baris itu tidak ada (model lupa format), negative dikosongkan dan
+// seluruh teks dianggap main prompt supaya tidak ada data yang hilang.
+function splitPromptAndNegative(text) {
+  const raw = String(text || "").trim();
+  const match = raw.match(/(^|\n)\s*Negative prompt\s*:\s*/i);
+
+  if (!match) {
+    return { main: raw, negative: "" };
+  }
+
+  const splitIndex = match.index + match[0].length;
+  const main = raw.slice(0, match.index).trim();
+  const negative = raw.slice(splitIndex).trim();
+
+  return { main, negative };
+}
+
+function joinPromptAndNegative(main, negative) {
+  if (!negative) return main;
+  return `${main}\n\nNegative prompt: ${negative}`;
+}
+
 // Potong ke batas kata maksimum, usahakan berhenti di akhir kalimat.
 function trimToMaxWords(text, maxWords) {
   const words = text.trim().split(/\s+/);
@@ -665,42 +702,46 @@ async function generatePromptWithinLimits(
   let best = null;
 
   for (let attempt = 0; attempt <= MAX_LENGTH_RETRIES; attempt++) {
-    const prompt = await callJerouter(
+    const rawOutput = await callJerouter(
       env,
       imageDataUrls,
       instruction,
       feedback
     );
 
-    const words = countWords(prompt);
+    const { main, negative } = splitPromptAndNegative(rawOutput);
+    const words = countWords(main);
 
-    console.log("PROMPT_WORD_COUNT", { attempt, words });
+    console.log("PROMPT_WORD_COUNT", {
+      attempt,
+      words,
+      hasNegative: !!negative
+    });
 
     if (words >= minWords && words <= maxWords) {
-      return prompt;
+      return joinPromptAndNegative(main, negative);
     }
 
     // Simpan kandidat terdekat dengan rentang sebagai cadangan
     const distance = words < minWords ? minWords - words : words - maxWords;
     if (!best || distance < best.distance) {
-      best = { prompt, words, distance };
+      best = { main, negative, words, distance };
     }
 
     feedback = {
-      previousPrompt: prompt,
+      previousPrompt: rawOutput,
       note:
         words < minWords
-          ? `Your previous prompt was only ${words} words, which is too short. Rewrite it so it is between ${minWords} and ${maxWords} words (aim for about 400). Add concrete visual detail about preserved elements and the requested change.`
-          : `Your previous prompt was ${words} words, which is too long. Rewrite it so it is between ${minWords} and ${maxWords} words (aim for about 400). Keep the most important details and remove redundancy.`
+          ? `Your previous main prompt was only ${words} words, which is too short. Rewrite it so the main prompt is between ${minWords} and ${maxWords} words (aim for about 400). Add concrete visual detail about preserved elements and the requested change. Keep the same output format, including the "Negative prompt:" line at the end.`
+          : `Your previous main prompt was ${words} words, which is too long. Rewrite it so the main prompt is between ${minWords} and ${maxWords} words (aim for about 400). Keep the most important details and remove redundancy. Keep the same output format, including the "Negative prompt:" line at the end.`
     };
   }
 
-  // Semua percobaan gagal: pakai kandidat terbaik, potong jika kelebihan
-  if (best.words > maxWords) {
-    return trimToMaxWords(best.prompt, maxWords);
-  }
+  // Semua percobaan gagal: pakai kandidat terbaik, potong main jika kelebihan
+  const finalMain =
+    best.words > maxWords ? trimToMaxWords(best.main, maxWords) : best.main;
 
-  return best.prompt;
+  return joinPromptAndNegative(finalMain, best.negative);
 }
 
 async function callJerouter(
