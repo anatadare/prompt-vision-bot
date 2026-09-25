@@ -3,8 +3,16 @@ You are a professional image-editing prompt engineer and visual reference analys
 
 The user communicates in Indonesian. Understand the user's Indonesian instructions naturally, but ALWAYS write the final image-editing prompt in English.
 
+You may receive ONE or MULTIPLE reference images for the same scene (for example: different angles of the same subject, a subject photo plus a separate outfit or background reference, or several shots of the same moment). When multiple images are provided:
+- Treat them together as reference material for ONE single edited scene, not as separate unrelated requests.
+- Combine consistent details across the images (identity, outfit, environment) into one coherent description.
+- If the images show the same subject from different angles, use the extra angles to describe the subject, pose and outfit more accurately and completely.
+- If the images clearly show different distinct elements (e.g. one image is the subject, another is a reference outfit or background), merge them into a single coherent scene as the instruction implies.
+- If details conflict between images, prioritize the clearest, most detailed view and stay internally consistent in the final prompt.
+- Never mention that there were multiple input images or describe them separately — output must read as one unified scene description.
+
 Your task:
-1. Analyze the supplied reference image.
+1. Analyze the supplied reference image(s).
 2. Understand exactly what the user wants to change.
 3. Identify visual elements that should remain unchanged.
 4. Produce ONE highly detailed English prompt suitable for a high-quality image-editing/generation model.
@@ -57,6 +65,7 @@ const MAX_TELEGRAM_MESSAGE = 3900;
 const DEFAULT_MIN_WORDS = 250;
 const DEFAULT_MAX_WORDS = 500;
 const MAX_LENGTH_RETRIES = 2;
+const DEFAULT_MAX_IMAGES = 5;
 const PENDING_TTL_MS = 30 * 60 * 1000; // 30 menit, sama seperti TTL KV sebelumnya
 
 // Durable Object: menyimpan sesi "foto menunggu instruksi" per chatId.
@@ -102,15 +111,27 @@ function getChatSessionStub(env, chatId) {
   return env.CHAT_SESSION.get(id);
 }
 
-async function sessionSavePending(env, chatId, fileId) {
+// Tambahkan satu fileId ke daftar foto yang sedang ditampung untuk chat ini.
+// Mengembalikan daftar fileIds terbaru (setelah ditambahkan, dan sudah dipotong ke MAX_IMAGES).
+async function sessionAddPending(env, chatId, fileId, maxImages) {
   const stub = getChatSessionStub(env, chatId);
   if (!stub) throw new Error("CHAT_SESSION binding is missing");
+
+  const existing = await sessionGetPending(env, chatId);
+  const fileIds = existing?.fileIds ? [...existing.fileIds] : [];
+
+  const wasFull = fileIds.length >= maxImages;
+  if (!wasFull) {
+    fileIds.push(fileId);
+  }
 
   await stub.fetch("https://chat-session/pending", {
     method: "PUT",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ fileId, createdAt: Date.now() })
+    body: JSON.stringify({ fileIds, createdAt: Date.now() })
   });
+
+  return { fileIds, wasFull };
 }
 
 async function sessionGetPending(env, chatId) {
@@ -216,13 +237,32 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "📖 How to use:\n\n" +
-      "1. Send a reference photo.\n" +
+      "1. Send one or more reference photos (one message at a time).\n" +
       "2. Send your instructions in Indonesian.\n" +
-      "3. I will generate one detailed English prompt.\n\n" +
-      "You can also send the photo with the instruction as its caption."
+      "3. I will analyze all the photos together as one scene and generate one detailed English prompt.\n\n" +
+      "You can also send a photo with the instruction as its caption to process it right away.\n\n" +
+      `Maximum ${Number(env.MAX_IMAGES_PER_SCENE || DEFAULT_MAX_IMAGES)} photos per scene. Send /reset to clear photos you've already sent.`
     );
 
     console.log("HELP_RECEIVED", chatId);
+    return;
+  }
+
+  // /reset
+  if (typeof message.text === "string" && message.text.startsWith("/reset")) {
+    try {
+      await sessionDeletePending(env, chatId);
+    } catch (error) {
+      console.error("SESSION_RESET_ERROR", error);
+    }
+
+    await telegramSendMessage(
+      env,
+      chatId,
+      "🔄 Cleared. Send a new reference photo to start again."
+    );
+
+    console.log("RESET_RECEIVED", chatId);
     return;
   }
 
@@ -230,6 +270,7 @@ async function handleTelegramUpdate(update, env) {
   const photoFileId = extractFileId(message);
   if (photoFileId) {
     const fileId = photoFileId;
+    const maxImages = Number(env.MAX_IMAGES_PER_SCENE || DEFAULT_MAX_IMAGES);
 
     console.log("PHOTO_RECEIVED", {
       chatId,
@@ -237,28 +278,57 @@ async function handleTelegramUpdate(update, env) {
       captionPresent: !!message.caption
     });
 
-    // Photo + caption = process immediately
+    // Photo + caption = process immediately, using this photo plus any
+    // photos already accumulated for this scene.
     if (typeof message.caption === "string" && message.caption.trim()) {
+      let fileIds = [fileId];
+
+      try {
+        const pending = await sessionGetPending(env, chatId);
+        if (pending?.fileIds?.length) {
+          fileIds = [...pending.fileIds, fileId].slice(0, maxImages);
+        }
+        await sessionDeletePending(env, chatId);
+      } catch (error) {
+        console.error("SESSION_GET_ERROR", error);
+      }
+
       await processImageInstruction(
         env,
         chatId,
-        fileId,
+        fileIds,
         message.caption.trim()
       );
 
       return;
     }
 
-    // Photo only = save for next instruction
+    // Photo only = accumulate for this scene, wait for the instruction
     try {
-      await sessionSavePending(env, chatId, fileId);
+      const { fileIds, wasFull } = await sessionAddPending(
+        env,
+        chatId,
+        fileId,
+        maxImages
+      );
 
-      console.log("SESSION_SAVED", { chatId });
+      console.log("SESSION_SAVED", { chatId, count: fileIds.length });
+
+      if (wasFull) {
+        await telegramSendMessage(
+          env,
+          chatId,
+          `⚠️ You already reached the limit of ${maxImages} photos for this scene.\n\n` +
+          "Send your instructions now, or /reset to start over with new photos."
+        );
+        return;
+      }
 
       await telegramSendMessage(
         env,
         chatId,
-        "✅ Reference photo received.\n\nNow send your instructions in Indonesian."
+        `✅ Photo ${fileIds.length}/${maxImages} received.\n\n` +
+        "Send another photo for the same scene, or send your instructions in Indonesian now."
       );
     } catch (error) {
       console.error("SESSION_SAVE_ERROR", error);
@@ -282,10 +352,19 @@ async function handleTelegramUpdate(update, env) {
       length: instruction.length
     });
 
-    // Jalur 1: user me-reply foto -> tidak butuh storage sama sekali
+    // Jalur 1: user me-reply foto -> proses foto itu saja, tidak butuh storage.
+    // Ini adalah override eksplisit, jadi batch foto yang sedang ditampung
+    // (kalau ada) dibersihkan supaya tidak ikut tercampur di instruksi berikutnya.
     const repliedFileId = extractFileId(message.reply_to_message);
     if (repliedFileId) {
-      await processImageInstruction(env, chatId, repliedFileId, instruction);
+      await processImageInstruction(env, chatId, [repliedFileId], instruction);
+
+      try {
+        await sessionDeletePending(env, chatId);
+      } catch (error) {
+        console.error("SESSION_DELETE_ERROR", error);
+      }
+
       return;
     }
 
@@ -294,14 +373,14 @@ async function handleTelegramUpdate(update, env) {
     try {
       pending = await sessionGetPending(env, chatId);
 
-      if (!pending) {
+      if (!pending?.fileIds?.length) {
         console.log("SESSION_MISSING", { chatId });
 
         await telegramSendMessage(
           env,
           chatId,
           "📷 Kirim foto referensi terlebih dahulu, lalu tulis instruksi perubahan.\n\n" +
-          "Tip: kamu juga bisa me-reply foto yang sudah dikirim dengan instruksimu."
+          "Kamu bisa kirim lebih dari satu foto untuk satu scene, atau me-reply foto yang sudah dikirim dengan instruksimu."
         );
 
         return;
@@ -309,7 +388,7 @@ async function handleTelegramUpdate(update, env) {
 
       console.log("SESSION_FOUND", {
         chatId,
-        fileIdPresent: !!pending?.fileId
+        count: pending.fileIds.length
       });
     } catch (error) {
       console.error("SESSION_GET_ERROR", error);
@@ -323,22 +402,10 @@ async function handleTelegramUpdate(update, env) {
       return;
     }
 
-    if (!pending?.fileId) {
-      console.error("SESSION_INVALID", { chatId });
-
-      await telegramSendMessage(
-        env,
-        chatId,
-        "❌ Your reference photo session is invalid. Please send the photo again."
-      );
-
-      return;
-    }
-
     await processImageInstruction(
       env,
       chatId,
-      pending.fileId,
+      pending.fileIds,
       instruction
     );
 
@@ -358,39 +425,44 @@ async function handleTelegramUpdate(update, env) {
 async function processImageInstruction(
   env,
   chatId,
-  fileId,
+  fileIds,
   instruction
 ) {
   try {
+    const ids = Array.isArray(fileIds) ? fileIds : [fileIds];
+
     await telegramSendMessage(
       env,
       chatId,
-      "🔍 Analyzing the reference image and generating your prompt..."
+      ids.length > 1
+        ? `🔍 Analyzing ${ids.length} reference photos and generating your prompt...`
+        : "🔍 Analyzing the reference image and generating your prompt..."
     );
 
     console.log("TELEGRAM_FILE_REQUEST", {
       chatId,
-      fileIdPresent: !!fileId
+      count: ids.length
     });
 
-    const imageDataUrl = await downloadTelegramImage(
-      env,
-      fileId
+    const imageDataUrls = await Promise.all(
+      ids.map((id) => downloadTelegramImage(env, id))
     );
 
     console.log("TELEGRAM_FILE_DOWNLOADED", {
       chatId,
-      bytes: imageDataUrl.length
+      count: imageDataUrls.length,
+      totalBytes: imageDataUrls.reduce((sum, u) => sum + u.length, 0)
     });
 
     console.log("JEROUTER_REQUEST", {
       chatId,
-      model: env.JEROUTER_MODEL || "qwen3.8-max"
+      model: env.JEROUTER_MODEL || "qwen3.8-max",
+      images: imageDataUrls.length
     });
 
     const prompt = await generatePromptWithinLimits(
       env,
-      imageDataUrl,
+      imageDataUrls,
       instruction
     );
 
@@ -583,7 +655,7 @@ function trimToMaxWords(text, maxWords) {
 // Minta model menghasilkan prompt 250-500 kata; retry jika di luar batas.
 async function generatePromptWithinLimits(
   env,
-  imageDataUrl,
+  imageDataUrls,
   instruction
 ) {
   const minWords = Number(env.MIN_PROMPT_WORDS || DEFAULT_MIN_WORDS);
@@ -595,7 +667,7 @@ async function generatePromptWithinLimits(
   for (let attempt = 0; attempt <= MAX_LENGTH_RETRIES; attempt++) {
     const prompt = await callJerouter(
       env,
-      imageDataUrl,
+      imageDataUrls,
       instruction,
       feedback
     );
@@ -633,7 +705,7 @@ async function generatePromptWithinLimits(
 
 async function callJerouter(
   env,
-  imageDataUrl,
+  imageDataUrls,
   instruction,
   feedback = null
 ) {
@@ -651,6 +723,28 @@ async function callJerouter(
     throw new Error("JEROUTER_API_KEY is missing");
   }
 
+  const urls = Array.isArray(imageDataUrls) ? imageDataUrls : [imageDataUrls];
+
+  const introText =
+    urls.length > 1
+      ? `User instruction (Indonesian):\n${instruction}\n\n` +
+        `You are given ${urls.length} reference images of the same scene/subject. ` +
+        "Understand this instruction in Indonesian and generate ONE final image-editing prompt in English " +
+        "that treats all the images together as one coherent scene. " +
+        "The prompt must be between 250 and 500 words."
+      : `User instruction (Indonesian):\n${instruction}\n\n` +
+        "Understand this instruction in Indonesian and generate the final image-editing prompt in English. " +
+        "The prompt must be between 250 and 500 words.";
+
+  const userContent = [{ type: "text", text: introText }];
+
+  urls.forEach((url, index) => {
+    if (urls.length > 1) {
+      userContent.push({ type: "text", text: `Reference image ${index + 1}:` });
+    }
+    userContent.push({ type: "image_url", image_url: { url } });
+  });
+
   const messages = [
     {
       role: "system",
@@ -658,21 +752,7 @@ async function callJerouter(
     },
     {
       role: "user",
-      content: [
-        {
-          type: "text",
-          text:
-            `User instruction (Indonesian):\n${instruction}\n\n` +
-            "Understand this instruction in Indonesian and generate the final image-editing prompt in English. " +
-            "The prompt must be between 250 and 500 words."
-        },
-        {
-          type: "image_url",
-          image_url: {
-            url: imageDataUrl
-          }
-        }
-      ]
+      content: userContent
     }
   ];
 
