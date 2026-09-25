@@ -156,6 +156,7 @@ Pending images expire after 30 minutes.
 | `MAX_IMAGE_BYTES` | `wrangler.toml` | Maximum downloaded image size |
 | `MIN_PROMPT_WORDS` | `wrangler.toml` | Minimum words in the generated prompt (default 250) |
 | `MAX_PROMPT_WORDS` | `wrangler.toml` | Maximum words in the generated prompt (default 500) |
+| `MAX_IMAGES_PER_SCENE` | `wrangler.toml` | Maximum number of reference photos accepted for one scene (default 5) |
 | `SESSION_KV` | `wrangler.toml` | Temporary image-session storage |
 
 ## Notes
