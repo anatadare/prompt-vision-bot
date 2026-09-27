@@ -74,6 +74,72 @@ Do not output multiple alternatives.
 Output ONLY the main prompt followed by the "Negative prompt:" line as described above — nothing before, nothing after.
 `;
 
+const VIDEO_SYSTEM_PROMPT = `
+You are a professional AI video-prompt engineer specialized in image-to-video (photo-to-video) generation, writing prompts for models such as Kling, Runway Gen-3/4, Luma Dream Machine, Pika, Sora and Veo.
+
+The user communicates in Indonesian. Understand the user's Indonesian instructions naturally, but ALWAYS write the final video prompt in English.
+
+You may receive ONE or MULTIPLE reference images of the same subject/scene (different angles of the same subject, or the subject plus an outfit/background reference). Treat them together as reference material for ONE single subject that will be animated into ONE coherent short video — never describe the images separately or mention that there were multiple input images.
+
+CORE PRINCIPLE — THE PHOTO IS THE ANCHOR FRAME:
+The reference photo(s) show the exact subject that must appear, unchanged in identity, throughout the entire generated video. Everything you write must describe MOTION and CHANGE that could plausibly start from that exact photo, not a different-looking subject or scene.
+
+Your task:
+1. Analyze the reference image(s) closely (face, hairstyle, hair color, skin tone, body proportions, outfit, pose, environment, existing lighting direction, camera framing).
+2. Understand what kind of video, motion, mood or story the user wants from their Indonesian instruction.
+3. Break the requested video into sequential SCENES (shots) that flow naturally and continuously from the photo, forming one coherent short video — not disconnected clips.
+4. For each scene, write a highly detailed, concrete English prompt describing subject movement, camera work, lighting and atmosphere, so an image-to-video AI model produces a realistic, cinematic, temporally consistent result.
+
+SCENE PLANNING RULES:
+- If the user specifies a duration, number of scenes, or number of shots, follow that instruction.
+- If the user does not specify, default to 3 scenes forming a short 6-10 second video.
+- Keep the total to a reasonable range of 1 to 6 scenes — never fragment the video into more scenes than the requested/implied duration can reasonably support.
+- Number scenes sequentially starting at "Scene 1" and give each an approximate timestamp range in seconds, e.g. "Scene 1 (0-3s):", continuing sequentially from the previous scene's end time (e.g. Scene 2 starts where Scene 1 ended).
+- Each scene must read as a direct continuation of the previous one: same subject, same identity, same outfit (unless the user explicitly asks for a change mid-video), same environment/setting, so the finished video feels like one continuous realistic clip.
+
+FOR EVERY SCENE, EXPLICITLY DESCRIBE (woven into flowing prose, not as a labeled list):
+- Subject action/movement: precisely what the person/subject physically does (turning head, walking forward, hair drifting, slow blink, shifting weight, gentle smile forming, fabric swaying, hand raising, etc.), grounded in the pose and framing visible in the reference photo.
+- Camera movement: state it explicitly and specifically — choose from static/locked shot, slow push-in, pull-out, pan left/right, tilt up/down, orbit/arc around subject, handheld micro-shake, low-angle push, dolly forward, drone rise, tracking shot alongside the subject — pick whatever best fits the requested mood, and vary it meaningfully between scenes rather than repeating the same movement every time.
+- Lighting and atmosphere: describe how existing light in the photo behaves and evolves (soft window light shifting, golden-hour rays moving across the face, neon reflections pulsing, candlelight flickering, shadows lengthening), staying consistent with the lighting direction already visible in the reference image unless the instruction asks for a lighting change.
+- Environment and secondary motion: natural ambient movement that adds realism (wind through hair or fabric, floating dust or petals, rippling water, drifting smoke, distant crowd or traffic motion, leaves rustling) while static elements (walls, furniture, buildings, fixed props) remain visually unchanged and consistent with the photo across every scene.
+- Facial expression and gaze evolution: subtle, natural changes over the scene (softening eyes, slow smile, gaze shifting toward camera) without ever breaking recognizable identity.
+- Pace and intensity: note whether the motion is slow-motion, naturalistic real-time, or energetic, matching the mood of the instruction.
+
+CREATIVITY RULES (very important):
+- When the user's instruction is short, vague, or minimal (for example: "bikin dia gerak", "jadi video aja", "kasih efek keren", "lebih sensual", "gerakannya bikin menarik"), become more creative and proactive: design elegant, cinematic, and — when contextually appropriate — sensual or intimate motion (a slow turn toward camera, hair falling as the head tilts, a lingering gaze, a soft sway, fabric moving to reveal more naturally) while keeping it tasteful, photorealistic and high quality, never crude.
+- If the user gives a clear and specific instruction (a story, a specific action, a specific camera move), follow it precisely and only add creative detail around what they specified.
+
+IDENTITY & CONSISTENCY LOCK (critical, strict):
+- Face, facial features, hairstyle, hair color, skin tone, body proportions, and outfit visible in the reference photo(s) MUST remain fully identical and recognizable across every single scene, unless the user explicitly instructs a change partway through.
+- The subject must never morph, age, change ethnicity-coded features, or shift identity between scenes.
+- The background/environment/setting anchored in the photo must remain the consistent setting across all scenes (same architecture, same props, same general location) unless the instruction explicitly asks for a scene/location change.
+- Do not invent identity details that cannot be reliably observed from the reference image(s).
+
+LENGTH REQUIREMENT (strict):
+- Each individual scene's prompt paragraph should be roughly 40 to 90 words of flowing descriptive prose (not a bullet list, not short fragments).
+- Across all scenes combined, the main content should stay roughly within 150 to 500 words total (excluding scene labels/timestamps and the negative prompt).
+
+NEGATIVE PROMPT REQUIREMENT (strict):
+After all scenes, produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-to-video model must avoid.
+- Always include identity/consistency safeguards: identity drift, face morphing between frames, changing facial features, inconsistent hairstyle, inconsistent outfit between scenes, changing skin tone, character teleporting, background inconsistency, environment changing unexpectedly.
+- Always include anatomy/motion safeguards: distorted body proportions, extra or missing fingers, extra or missing limbs, malformed hands, unnatural limb bending, physics-defying motion, warped anatomy during movement.
+- Always include general video-artifact safeguards: flickering, frame jitter, temporal inconsistency, motion blur artifacts, unnatural frame interpolation, low quality, blurry, distorted, watermark, text overlay, subtitles, extra objects appearing, duplicate subject, unrealistic lighting changes, mismatched perspective, static frozen frame with no motion.
+- Keep it a flat comma-separated list, typically 25 to 60 words, not a sentence or explanation.
+
+OUTPUT FORMAT (strict):
+Output exactly these parts, nothing else:
+1. For each scene, one line starting with "Scene N (start-end s):" immediately followed by that scene's detailed English prompt as flowing prose. Separate each scene block from the next with a blank line.
+2. After the last scene, a blank line, then a line that starts exactly with "Negative prompt:" followed by the comma-separated negative prompt on the same line.
+
+Do not mention that you are an AI.
+Do not explain your analysis.
+Do not use headings such as "Analysis", "Preserve", or "Changes".
+Do not output multiple alternative versions.
+Do not mention camera brand/gear names or software names.
+
+Output ONLY the scene-by-scene prompt followed by the "Negative prompt:" line as described above — nothing before, nothing after.
+`;
+
 const MAX_TELEGRAM_MESSAGE = 3900;
 const DEFAULT_MIN_WORDS = 250;
 const DEFAULT_MAX_WORDS = 500;
@@ -91,6 +157,24 @@ export class ChatSession {
   }
 
   async fetch(request) {
+    const url = new URL(request.url);
+
+    // Mode (image / video) — persisten, tidak kena TTL foto.
+    if (url.pathname === "/mode") {
+      if (request.method === "PUT") {
+        const body = await request.json();
+        await this.state.storage.put("mode", body.mode === "video" ? "video" : "image");
+        return new Response("OK");
+      }
+
+      if (request.method === "GET") {
+        const mode = await this.state.storage.get("mode");
+        return Response.json({ mode: mode === "video" ? "video" : "image" });
+      }
+
+      return new Response("Not found", { status: 404 });
+    }
+
     if (request.method === "PUT") {
       const body = await request.json();
       await this.state.storage.put("pending", body);
@@ -167,6 +251,33 @@ async function sessionDeletePending(env, chatId) {
   });
 }
 
+// Ambil mode aktif untuk chat ini: "image" (default, edit foto) atau "video" (image-to-video).
+async function sessionGetMode(env, chatId) {
+  const stub = getChatSessionStub(env, chatId);
+  if (!stub) return "image";
+
+  try {
+    const res = await stub.fetch("https://chat-session/mode", { method: "GET" });
+    const data = await res.json();
+    return data.mode === "video" ? "video" : "image";
+  } catch (error) {
+    console.error("SESSION_MODE_GET_ERROR", error);
+    return "image";
+  }
+}
+
+// Set mode aktif untuk chat ini.
+async function sessionSetMode(env, chatId, mode) {
+  const stub = getChatSessionStub(env, chatId);
+  if (!stub) throw new Error("CHAT_SESSION binding is missing");
+
+  await stub.fetch("https://chat-session/mode", {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ mode: mode === "video" ? "video" : "image" })
+  });
+}
+
 // Ambil file_id gambar dari sebuah message (photo atau document bergambar)
 function extractFileId(msg) {
   if (!msg) return null;
@@ -236,8 +347,9 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "👋 Welcome to Prompt Vision Bot!\n\n" +
-      "Send a reference photo, then send your instructions in Indonesian.\n\n" +
-      "I will analyze the image and generate a detailed English image-editing prompt."
+      "🖼️ Mode default: EDIT FOTO. Kirim foto referensi, lalu kirim instruksi editnya dalam Bahasa Indonesia — aku hasilkan prompt image-editing detail dalam Bahasa Inggris.\n\n" +
+      "🎬 Mode VIDEO: ketik /video untuk beralih. Kirim foto referensi + instruksi, aku hasilkan prompt image-to-video per scene (movement, camera, lighting) yang tetap menjaga karakter/identitas dari foto.\n\n" +
+      "Ketik /help untuk detail lengkap."
     );
 
     console.log("START_RECEIVED", chatId);
@@ -250,14 +362,59 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "📖 How to use:\n\n" +
+      "🖼️ MODE EDIT FOTO (default):\n" +
       "1. Send one or more reference photos (one message at a time).\n" +
       "2. Send your instructions in Indonesian.\n" +
-      "3. I will analyze all the photos together as one scene and generate one detailed English prompt.\n\n" +
+      "3. I will analyze all the photos together as one scene and generate one detailed English image-editing prompt.\n\n" +
+      "🎬 MODE VIDEO (image-to-video):\n" +
+      "1. Ketik /video untuk masuk mode ini (sekali diset, tetap aktif sampai kamu ganti lagi).\n" +
+      "2. Kirim foto referensi + instruksi (gerakan, mood, durasi/jumlah scene kalau mau spesifik).\n" +
+      "3. Aku hasilkan prompt image-to-video detail per scene: pergerakan subjek, camera movement, lighting, atmosphere — sambil menjaga wajah, outfit, dan identitas dari foto tetap konsisten di semua scene.\n" +
+      "4. Ketik /image untuk kembali ke mode edit foto.\n\n" +
       "You can also send a photo with the instruction as its caption to process it right away.\n\n" +
       `Maximum ${Number(env.MAX_IMAGES_PER_SCENE || DEFAULT_MAX_IMAGES)} photos per scene. Send /reset to clear photos you've already sent.`
     );
 
     console.log("HELP_RECEIVED", chatId);
+    return;
+  }
+
+  // /video - beralih ke mode image-to-video
+  if (typeof message.text === "string" && message.text.startsWith("/video")) {
+    try {
+      await sessionSetMode(env, chatId, "video");
+    } catch (error) {
+      console.error("SESSION_MODE_SET_ERROR", error);
+    }
+
+    await telegramSendMessage(
+      env,
+      chatId,
+      "🎬 Mode VIDEO aktif.\n\n" +
+      "Kirim foto referensi, lalu tulis instruksi video kamu (gerakan, mood, camera movement, durasi/jumlah scene kalau mau spesifik — boleh dalam Bahasa Indonesia).\n\n" +
+      "Aku akan hasilkan prompt image-to-video detail per scene (movement, camera, lighting) dalam Bahasa Inggris, siap dipakai di tool image-to-video AI (Kling, Runway, Luma, Pika, dll), sambil menjaga karakter/identitas dari foto tetap konsisten.\n\n" +
+      "Ketik /image untuk kembali ke mode edit foto."
+    );
+
+    console.log("MODE_SET_VIDEO", chatId);
+    return;
+  }
+
+  // /image - kembali ke mode edit foto
+  if (typeof message.text === "string" && message.text.startsWith("/image")) {
+    try {
+      await sessionSetMode(env, chatId, "image");
+    } catch (error) {
+      console.error("SESSION_MODE_SET_ERROR", error);
+    }
+
+    await telegramSendMessage(
+      env,
+      chatId,
+      "🖼️ Mode EDIT FOTO aktif. Kirim foto referensi, lalu instruksi perubahan yang kamu mau."
+    );
+
+    console.log("MODE_SET_IMAGE", chatId);
     return;
   }
 
@@ -306,11 +463,14 @@ async function handleTelegramUpdate(update, env) {
         console.error("SESSION_GET_ERROR", error);
       }
 
+      const modeForCaption = await sessionGetMode(env, chatId);
+
       await processImageInstruction(
         env,
         chatId,
         fileIds,
-        message.caption.trim()
+        message.caption.trim(),
+        modeForCaption
       );
 
       return;
@@ -370,7 +530,8 @@ async function handleTelegramUpdate(update, env) {
     // (kalau ada) dibersihkan supaya tidak ikut tercampur di instruksi berikutnya.
     const repliedFileId = extractFileId(message.reply_to_message);
     if (repliedFileId) {
-      await processImageInstruction(env, chatId, [repliedFileId], instruction);
+      const modeForReply = await sessionGetMode(env, chatId);
+      await processImageInstruction(env, chatId, [repliedFileId], instruction, modeForReply);
 
       try {
         await sessionDeletePending(env, chatId);
@@ -415,11 +576,14 @@ async function handleTelegramUpdate(update, env) {
       return;
     }
 
+    const modeForPending = await sessionGetMode(env, chatId);
+
     await processImageInstruction(
       env,
       chatId,
       pending.fileIds,
-      instruction
+      instruction,
+      modeForPending
     );
 
     try {
@@ -439,22 +603,30 @@ async function processImageInstruction(
   env,
   chatId,
   fileIds,
-  instruction
+  instruction,
+  mode = "image"
 ) {
+  const isVideo = mode === "video";
+
   try {
     const ids = Array.isArray(fileIds) ? fileIds : [fileIds];
 
     await telegramSendMessage(
       env,
       chatId,
-      ids.length > 1
-        ? `🔍 Analyzing ${ids.length} reference photos and generating your prompt...`
-        : "🔍 Analyzing the reference image and generating your prompt..."
+      isVideo
+        ? (ids.length > 1
+            ? `🎬 Menganalisis ${ids.length} foto referensi dan menyusun prompt video per scene...`
+            : "🎬 Menganalisis foto referensi dan menyusun prompt video per scene...")
+        : (ids.length > 1
+            ? `🔍 Analyzing ${ids.length} reference photos and generating your prompt...`
+            : "🔍 Analyzing the reference image and generating your prompt...")
     );
 
     console.log("TELEGRAM_FILE_REQUEST", {
       chatId,
-      count: ids.length
+      count: ids.length,
+      mode
     });
 
     const imageDataUrls = await Promise.all(
@@ -470,19 +642,19 @@ async function processImageInstruction(
     console.log("JEROUTER_REQUEST", {
       chatId,
       model: env.JEROUTER_MODEL || "qwen3.8-max",
-      images: imageDataUrls.length
+      images: imageDataUrls.length,
+      mode
     });
 
-    const prompt = await generatePromptWithinLimits(
-      env,
-      imageDataUrls,
-      instruction
-    );
+    const prompt = isVideo
+      ? await generateVideoPrompt(env, imageDataUrls, instruction)
+      : await generatePromptWithinLimits(env, imageDataUrls, instruction);
 
     console.log("JEROUTER_RESPONSE", {
       chatId,
       length: prompt.length,
-      words: countWords(prompt)
+      words: countWords(prompt),
+      mode
     });
 
     await sendLongTelegramMessage(
@@ -496,7 +668,7 @@ async function processImageInstruction(
     await telegramSendMessage(
       env,
       chatId,
-      `❌ Failed to generate the prompt.\n\nError: ${error.message}`
+      `❌ Failed to generate the ${isVideo ? "video " : ""}prompt.\n\nError: ${error.message}`
     );
   }
 }
@@ -744,11 +916,59 @@ async function generatePromptWithinLimits(
   return joinPromptAndNegative(finalMain, best.negative);
 }
 
+// Minta model menghasilkan prompt image-to-video per scene ("Scene 1 (0-3s): ...")
+// diikuti "Negative prompt:". Retry jika format scene/negative belum terpenuhi.
+async function generateVideoPrompt(env, imageDataUrls, instruction) {
+  let feedback = null;
+  let lastRawOutput = null;
+
+  for (let attempt = 0; attempt <= MAX_LENGTH_RETRIES; attempt++) {
+    const rawOutput = await callJerouter(env, imageDataUrls, instruction, feedback, {
+      systemPrompt: VIDEO_SYSTEM_PROMPT,
+      mode: "video"
+    });
+
+    lastRawOutput = rawOutput;
+
+    const { main, negative } = splitPromptAndNegative(rawOutput);
+    const hasSceneOne = /Scene\s*1\b/i.test(main);
+    const hasNegative = !!negative;
+
+    console.log("VIDEO_PROMPT_CHECK", {
+      attempt,
+      hasSceneOne,
+      hasNegative,
+      words: countWords(main)
+    });
+
+    if (hasSceneOne && hasNegative) {
+      return joinPromptAndNegative(main, negative);
+    }
+
+    feedback = {
+      previousPrompt: rawOutput,
+      note:
+        "Your previous output did not follow the required format. You MUST break the video into sequential scenes, " +
+        "each starting with its own line exactly like 'Scene 1 (0-3s):', 'Scene 2 (3-6s):', and so on, followed by a detailed flowing " +
+        "English paragraph covering subject movement, camera movement, lighting and atmosphere for that scene, while keeping the subject's " +
+        "identity, face, hairstyle, outfit and environment fully consistent with the reference photo across all scenes. " +
+        "After the last scene, add a blank line then a line starting exactly with 'Negative prompt:' followed by the comma-separated negative prompt. " +
+        "Output ONLY that format, nothing else."
+    };
+  }
+
+  // Semua percobaan gagal memenuhi format ketat: fallback ke best-effort split
+  // supaya user tetap dapat sesuatu yang bisa dipakai, bukan error kosong.
+  const { main, negative } = splitPromptAndNegative(lastRawOutput);
+  return joinPromptAndNegative(main, negative || "");
+}
+
 async function callJerouter(
   env,
   imageDataUrls,
   instruction,
-  feedback = null
+  feedback = null,
+  options = {}
 ) {
   const baseUrl =
     env.JEROUTER_BASE_URL ||
@@ -764,18 +984,31 @@ async function callJerouter(
     throw new Error("JEROUTER_API_KEY is missing");
   }
 
+  const isVideo = options.mode === "video";
+  const systemPrompt = options.systemPrompt || DEFAULT_SYSTEM_PROMPT;
+
   const urls = Array.isArray(imageDataUrls) ? imageDataUrls : [imageDataUrls];
 
-  const introText =
-    urls.length > 1
-      ? `User instruction (Indonesian):\n${instruction}\n\n` +
-        `You are given ${urls.length} reference images of the same scene/subject. ` +
-        "Understand this instruction in Indonesian and generate ONE final image-editing prompt in English " +
-        "that treats all the images together as one coherent scene. " +
-        "The prompt must be between 250 and 500 words."
-      : `User instruction (Indonesian):\n${instruction}\n\n` +
-        "Understand this instruction in Indonesian and generate the final image-editing prompt in English. " +
-        "The prompt must be between 250 and 500 words.";
+  const introText = isVideo
+    ? (urls.length > 1
+        ? `User instruction (Indonesian):\n${instruction}\n\n` +
+          `You are given ${urls.length} reference images of the same subject/scene. ` +
+          "These images will be animated into ONE short video by an image-to-video AI model. " +
+          "Understand this instruction in Indonesian and generate a detailed English image-to-video prompt, broken into sequential scenes, " +
+          "treating all the images together as one coherent subject and keeping the subject's identity fully consistent across every scene."
+        : `User instruction (Indonesian):\n${instruction}\n\n` +
+          "This reference image will be animated into a short video by an image-to-video AI model. " +
+          "Understand this instruction in Indonesian and generate a detailed English image-to-video prompt, broken into sequential scenes, " +
+          "keeping the subject's identity fully consistent across every scene.")
+    : (urls.length > 1
+        ? `User instruction (Indonesian):\n${instruction}\n\n` +
+          `You are given ${urls.length} reference images of the same scene/subject. ` +
+          "Understand this instruction in Indonesian and generate ONE final image-editing prompt in English " +
+          "that treats all the images together as one coherent scene. " +
+          "The prompt must be between 250 and 500 words."
+        : `User instruction (Indonesian):\n${instruction}\n\n` +
+          "Understand this instruction in Indonesian and generate the final image-editing prompt in English. " +
+          "The prompt must be between 250 and 500 words.");
 
   const userContent = [{ type: "text", text: introText }];
 
@@ -789,7 +1022,7 @@ async function callJerouter(
   const messages = [
     {
       role: "system",
-      content: DEFAULT_SYSTEM_PROMPT
+      content: systemPrompt
     },
     {
       role: "user",
