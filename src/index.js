@@ -1050,19 +1050,44 @@ async function callJerouter(
     requestBody.temperature = Number(tempRaw);
   }
 
-  const response = await fetch(
-    `${baseUrl.replace(/\/$/, "")}/chat/completions`,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(requestBody)
-    }
-  );
+  // MAX_TOKENS (opsional, di wrangler.toml [vars]) -> batasi panjang output.
+  const maxTokensRaw = env.MAX_TOKENS ? Number(env.MAX_TOKENS) : 0;
+  if (maxTokensRaw > 0) {
+    requestBody.max_tokens = maxTokensRaw;
+  }
 
-  const rawText = await response.text();
+  const url = `${baseUrl.replace(/\/$/, "")}/chat/completions`;
+  const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504, 520, 522, 524]);
+  const MAX_HTTP_RETRIES = 3;
+
+  let response;
+  let rawText = "";
+
+  for (let i = 0; i <= MAX_HTTP_RETRIES; i++) {
+    try {
+      response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      rawText = await response.text();
+
+      if (!RETRYABLE_STATUS.has(response.status) || i === MAX_HTTP_RETRIES) {
+        break;
+      }
+
+      console.warn("JEROUTER_RETRY", { attempt: i, status: response.status });
+    } catch (err) {
+      if (i === MAX_HTTP_RETRIES) throw err;
+      console.warn("JEROUTER_NETWORK_RETRY", { attempt: i, err: String(err) });
+    }
+
+    await new Promise((r) => setTimeout(r, 2000 * (i + 1))); // 2s, 4s, 6s
+  }
 
   let data;
 
@@ -1070,7 +1095,8 @@ async function callJerouter(
     data = JSON.parse(rawText);
   } catch {
     throw new Error(
-      `Jerouter returned non-JSON response: ${rawText.slice(0, 500)}`
+      `Jerouter HTTP ${response.status} (bukan JSON): ${rawText.slice(0, 200)}. ` +
+      `Server AI sedang bermasalah, coba lagi sebentar lagi.`
     );
   }
 
