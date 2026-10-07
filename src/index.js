@@ -308,7 +308,7 @@ export default {
     if (request.method === "GET" && url.pathname === "/health") {
       return Response.json({
         ok: true,
-        model: env.JEROUTER_MODEL || "deepseek-unrestricted",
+        model: env.JEROUTER_MODEL || "qwen3.8-27b-unsencored",
         chatSession: !!env.CHAT_SESSION
       });
     }
@@ -645,7 +645,7 @@ async function processImageInstruction(
 
     console.log("JEROUTER_REQUEST", {
       chatId,
-      model: env.JEROUTER_MODEL || "deepseek-unrestricted",
+      model: env.JEROUTER_MODEL || "qwen3.8-27b-unsencored",
       images: imageDataUrls.length,
       mode
     });
@@ -980,7 +980,7 @@ async function callJerouter(
 
   const model =
     env.JEROUTER_MODEL ||
-    "deepseek-unrestricted";
+    "qwen3.8-27b-unsencored";
 
   const apiKey = env.JEROUTER_API_KEY;
 
