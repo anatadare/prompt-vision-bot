@@ -156,12 +156,57 @@ const PENDING_TTL_MS = 30 * 60 * 1000; // 30 menit, sama seperti TTL KV sebelumn
 // jadi baca-setelah-tulis selalu konsisten (tidak ada lagi race/propagation
 // delay seperti pada Cloudflare KV).
 export class ChatSession {
-  constructor(state) {
+  constructor(state, env) {
     this.state = state;
+    this.env = env;
+  }
+
+  // Dijalankan oleh alarm (bisa sampai beberapa menit), bukan oleh webhook Telegram.
+  async alarm() {
+    const jobs = await this.state.storage.list({ prefix: "job:" });
+    for (const [key, job] of jobs) {
+      // Hapus dulu supaya job yang gagal tidak diulang terus-menerus oleh alarm retry.
+      await this.state.storage.delete(key);
+      try {
+        await processImageInstruction(
+          this.env,
+          job.chatId,
+          job.fileIds,
+          job.instruction,
+          job.mode
+        );
+      } catch (error) {
+        console.error("JOB_ERROR", error);
+      }
+    }
   }
 
   async fetch(request) {
     const url = new URL(request.url);
+
+    // Dedupe update_id Telegram (Telegram mengirim ulang kalau webhook lambat).
+    if (url.pathname === "/seen" && request.method === "POST") {
+      const { updateId } = await request.json();
+      const last = (await this.state.storage.get("lastUpdateId")) || 0;
+      if (typeof updateId === "number" && updateId <= last) {
+        return Response.json({ duplicate: true });
+      }
+      if (typeof updateId === "number") {
+        await this.state.storage.put("lastUpdateId", updateId);
+      }
+      return Response.json({ duplicate: false });
+    }
+
+    // Antrikan job; diproses di alarm().
+    if (url.pathname === "/job" && request.method === "POST") {
+      const job = await request.json();
+      await this.state.storage.put(`job:${Date.now()}:${Math.random().toString(36).slice(2)}`, job);
+      const existing = await this.state.storage.getAlarm();
+      if (existing === null) {
+        await this.state.storage.setAlarm(Date.now() + 100);
+      }
+      return new Response("OK");
+    }
 
     // Mode (image / video) — persisten, tidak kena TTL foto.
     if (url.pathname === "/mode") {
@@ -282,6 +327,33 @@ async function sessionSetMode(env, chatId, mode) {
   });
 }
 
+async function sessionEnqueueJob(env, chatId, fileIds, instruction, mode) {
+  const stub = getChatSessionStub(env, chatId);
+  if (!stub) throw new Error("CHAT_SESSION binding is missing");
+  await stub.fetch("https://chat-session/job", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ chatId, fileIds, instruction, mode })
+  });
+}
+
+async function sessionIsDuplicateUpdate(env, chatId, updateId) {
+  try {
+    const stub = getChatSessionStub(env, chatId);
+    if (!stub) return false;
+    const res = await stub.fetch("https://chat-session/seen", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ updateId })
+    });
+    const data = await res.json();
+    return !!data.duplicate;
+  } catch (error) {
+    console.error("DEDUPE_ERROR", error);
+    return false;
+  }
+}
+
 // Ambil file_id gambar dari sebuah message (photo atau document bergambar)
 function extractFileId(msg) {
   if (!msg) return null;
@@ -385,6 +457,12 @@ export default {
     if (request.method === "POST" && url.pathname === "/telegram/webhook") {
       try {
         const update = await request.json();
+        const dupChatId = update?.message?.chat?.id;
+        if (dupChatId && typeof update.update_id === "number" &&
+            await sessionIsDuplicateUpdate(env, dupChatId, update.update_id)) {
+          console.log("DUPLICATE_UPDATE", update.update_id);
+          return new Response("OK", { status: 200 });
+        }
         await handleTelegramUpdate(update, env);
 
         return new Response("OK", { status: 200 });
@@ -538,13 +616,7 @@ async function handleTelegramUpdate(update, env) {
 
       const modeForCaption = await sessionGetMode(env, chatId);
 
-      await processImageInstruction(
-        env,
-        chatId,
-        fileIds,
-        message.caption.trim(),
-        modeForCaption
-      );
+      await sessionEnqueueJob(env, chatId, fileIds, message.caption.trim(), modeForCaption);
 
       return;
     }
@@ -604,7 +676,7 @@ async function handleTelegramUpdate(update, env) {
     const repliedFileId = extractFileId(message.reply_to_message);
     if (repliedFileId) {
       const modeForReply = await sessionGetMode(env, chatId);
-      await processImageInstruction(env, chatId, [repliedFileId], instruction, modeForReply);
+      await sessionEnqueueJob(env, chatId, [repliedFileId], instruction, modeForReply);
 
       try {
         await sessionDeletePending(env, chatId);
@@ -651,13 +723,7 @@ async function handleTelegramUpdate(update, env) {
 
     const modeForPending = await sessionGetMode(env, chatId);
 
-    await processImageInstruction(
-      env,
-      chatId,
-      pending.fileIds,
-      instruction,
-      modeForPending
-    );
+    await sessionEnqueueJob(env, chatId, pending.fileIds, instruction, modeForPending);
 
     try {
       await sessionDeletePending(env, chatId);
