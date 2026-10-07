@@ -4,10 +4,10 @@ compatibility_date = "2026-09-24"
 
 [vars]
 JEROUTER_BASE_URL = "https://jerouter-relay-ygr0z1n0j044.anatadare.deno.net/v1"
-JEROUTER_MODEL = "unrestricted"
+JEROUTER_MODEL = "glm-5.3-flash"
 TEMPERATURE = "0.35"
 MAX_IMAGE_BYTES = "7000000"
-MIN_PROMPT_WORDS = "250"
+MIN_PROMPT_WORDS = "350"
 MAX_PROMPT_WORDS = "500"
 MAX_IMAGES_PER_SCENE = "5"
 
