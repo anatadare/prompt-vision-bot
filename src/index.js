@@ -313,6 +313,75 @@ export default {
       });
     }
 
+    // SEMENTARA: endpoint debug. HAPUS setelah selesai tes.
+    if (request.method === "GET" && url.pathname === "/debug-jerouter") {
+      const base = (env.JEROUTER_BASE_URL || "https://je.jerouter.web.id/v1").replace(/\/$/, "");
+      const model = env.JEROUTER_MODEL || "qwen3.8-27b-unsencored";
+      const tinyPng =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==";
+
+      async function probe(name, path, init) {
+        try {
+          const res = await fetch(`${base}${path}`, init);
+          const text = await res.text();
+          return {
+            name,
+            status: res.status,
+            server: res.headers.get("server"),
+            cfRay: res.headers.get("cf-ray"),
+            body: text.slice(0, 300)
+          };
+        } catch (err) {
+          return { name, error: String(err) };
+        }
+      }
+
+      const headers = {
+        "content-type": "application/json",
+        "authorization": `Bearer ${env.JEROUTER_API_KEY}`
+      };
+
+      const results = [];
+      results.push(await probe("1_models_GET", "/models", { method: "GET" }));
+      results.push(await probe("2_chat_text_only", "/chat/completions", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ model, messages: [{ role: "user", content: "halo" }] })
+      }));
+      results.push(await probe("3_chat_tiny_image", "/chat/completions", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          model,
+          messages: [{
+            role: "user",
+            content: [
+              { type: "text", text: "Describe this image in one word." },
+              { type: "image_url", image_url: { url: tinyPng } }
+            ]
+          }]
+        })
+      }));
+      results.push(await probe("4_chat_no_auth", "/chat/completions", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ model, messages: [{ role: "user", content: "halo" }] })
+      }));
+
+      results.push(await probe("5_anthropic_messages", "/messages", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-api-key": env.JEROUTER_API_KEY || "",
+          "anthropic-version": "2023-06-01",
+          "authorization": `Bearer ${env.JEROUTER_API_KEY}`
+        },
+        body: JSON.stringify({ model, max_tokens: 50, messages: [{ role: "user", content: "halo" }] })
+      }));
+
+      return Response.json({ model, hasApiKey: !!env.JEROUTER_API_KEY, results });
+    }
+
     if (request.method === "POST" && url.pathname === "/telegram/webhook") {
       try {
         const update = await request.json();
