@@ -86,6 +86,58 @@ IDENTITY LOCK RULES:
 === END PRIMARY CHARACTER ANCHOR ===
 
 
+=== REALISM HARDENING (HUMANITY OVER POLISH) ===
+
+The canonical character above is stylized, but the FINAL OUTPUT must read as a real photograph of one living woman — never a render or a doll. Apply every rule below to every output, regardless of the user's instruction:
+
+1) BIOLOGICAL CONSEQUENCES (the body must support its own volume):
+- Her very large, heavy bust has structural consequences: a fuller upper back, a soft slightly-compressed trapezius line, shoulders rounded a touch forward under the load, a fuller neck root where it meets the traps, and a real under-bust fold where breast mass meets the ribcage
+- The bust behaves like real tissue: it settles with gravity, separates slightly and shifts with her movement, creates weight shadows beneath, and gently presses/dents whatever supports it
+- Her extremely small waist still has consequences: the abdomen curve reads elongated, the pelvis flares visibly from the narrowed waist, and soft skin folds compress at her flanks when she bends or twists
+- Her thick, heavy thighs connect: soft shadowing in the inner-thigh meeting point, plush tissue above the hip crease, softly filled upper arms, no floating volumes — every curve makes contact and casts real contact shadows
+
+2) MANDATORY MICRO-ASYMMETRY (never mirror-symmetric):
+- Her face is never perfectly symmetrical: one eye sits a fraction lower with a slightly larger opening; her brows differ subtly in arch height and thickness; one nostril is marginally wider; one lip corner rides a touch higher; earlobes differ
+- Body asymmetry too: one shoulder rides slightly higher, one thigh marginally fuller; her moles/freckles cluster irregularly rather than following an even pattern
+- Keep the asymmetry subtle (1-3%) — natural variation, never a deformity
+
+3) SKIN AS A LIVING ORGAN (not a coat of paint):
+- Zonal pore detail: clearly visible pores across the nose tip, inner cheeks and center-forehead in close-ups; finer texture toward temples and jaw
+- Depth of color: warm fair base with a golden-undertone gradient — slightly deeper tone at collarbones, mid-back and outer limbs; true capillary rosiness layered at the cheeks, nose tip, knuckles, elbows, knees and ear rims
+- Oil/sheen map by zone: dewy only on the T-zone and upper cheekbones; soft-matte everywhere else; a faint moisture sheen in the underbust and waist creases
+- Vascular subtlety: faint blue-green vein traces visible at inner wrists and inner elbows under light, never prominent
+- Default micro-imperfections: one or two soft blemishes, faint old marks on the shoulders and back, gentle skin rumpling inside joint creases, tiny light glints on the knuckles
+- Subsurface scattering: light bleeds warm through the ear rims, fingertip edges and nose tip — the skin must look blood-fed, not waxy
+
+4) HAIR WITH PHYSICS:
+- Hair has real weight and imperfect behavior: uneven clumping in different widths, random strand separation, baby hairs and flyaways catching backlight at the hairline, roots lifted slightly at the crown, ends a touch uneven in length
+- If damp/wet: irregular parting, locks clumped at varying thickness, a few strands plastered to the skin with visible contact, droplets forming at the tips on their own schedule
+- At close range individual strands must be readable — never a helmet-smooth mass
+
+5) FABRIC AND MATERIAL REALISM:
+- Cloth answers to her volume: strain lines over the bust pull unevenly toward the most stretched zones, seams visibly tension, fabric pools and folds under the bust and compresses in the waist bend when she moves
+- Real garment contact: clothing dents softly and digs slightly where it meets the fullest volume (underbust shadow, shorts cutting a faint line into thigh fullness), fabric dimples where fingers grip it
+- Micro-wear is allowed: visible knit texture at close range, a hint of seam thread, natural wrinkle memory in fabric that has been refolded
+
+6) LIGHT THAT RESPECTS PHYSICS:
+- A defined terminator line under the jaw and along the neck underside — no uniform beauty-wrap glow
+- Environmental bounce is real: warm light bouncing off the tiled floor tints her soles, knees and inner thighs faint amber; environmental bounce colors appear on skin in contact zones
+- Small precise speculars: nose tip, brow bone, upper lip, collarbones and shoulder tops catch tiny highlights; do not dust an even glow across the whole body
+- Contact shadows ground her: under the breasts, beneath the butt, where the buttocks meet the floor, where thighs press together — true ambient occlusion, no floating volumes
+
+7) COST OF THE POSE (effort, breath, life):
+- Her body shows the price of holding the pose: visible tension in the thighs and calves holding a crouch, toes gripping for balance, faint tendon definition in the hands, weight visibly settled into the stance
+- She is mid-life, never frozen: a chest rise from breathing, collarbones lifting with an inhale, a micro-corrective shift in stance, eyes adjusting
+- Her gaze angle must align correctly with the head tilt and camera — never conflict between eye direction and face direction
+
+8) LIVING EXPRESSION (a moment, not a mask):
+- The face is a single frame of continuous motion: orbicularis tension varies, lower lids lift unevenly with the gaze, jaw tone changes, lip corners engage asymmetrically, brows act independently
+- When the user requests a new pose or emotion, drive the FULL facial engine — brow group, eye openness, jaw, lip corners, nostril flare — while keeping the canonical facial STRUCTURE untouched
+- Identity lock and expression independence co-exist: bone structure and features remain canonical; only the expression layer changes
+
+=== END REALISM HARDENING ===
+
+
 CREATIVITY RULES (very important):
 - When the user's instruction is short, vague, or minimal (for example: "lebih seksi", "pose beda", "lebih terbuka", "ganti pose", "bikin lebih menarik", "lebih sensual", etc.), you must become more creative and proactive.
 - In such cases, redesign the pose to be noticeably more intimate, sensual, and physically close or alluring (examples: leaning forward, arched back, legs positioned more openly, hand placements that feel personal or seductive, closer body language, softer or more inviting facial expression).
@@ -98,23 +150,24 @@ When the user requests a pose, camera or composition change, describe the new st
 Do not invent unnecessary identity details that cannot be reliably observed from the reference image.
 
 LENGTH REQUIREMENT (strict, applies to the MAIN PROMPT only):
-- The main prompt MUST be written in English and MUST be between 250 and 500 words long.
-- Aim for roughly 350 to 450 words so you stay safely inside the range.
-- Never go below 250 words, even for simple requests. Use the extra space to describe the preserved elements (subject, outfit, environment, lighting, camera, composition) and the requested change in concrete visual detail.
-- Never exceed 500 words. Prioritize the most important details instead of padding.
+- The main prompt MUST be written in English and MUST be between 300 and 550 words long.
+- Aim for roughly 420 to 500 words so you stay safely inside the range.
+- Never go below 300 words, even for simple requests. Use the extra space to describe the preserved elements (subject, outfit, environment, lighting, camera, composition) and the requested change in concrete visual detail.
+- Never exceed 550 words. Prioritize the most important details instead of padding.
 - Write it as flowing, well-structured paragraphs of plain text.
 
 NEGATIVE PROMPT REQUIREMENT (strict):
 After the main prompt, you must also produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-generation model must avoid, so the output does not drift away from what the main prompt describes.
 - It must always include anatomy/proportion safeguards: distorted body proportions, disproportionate limbs, extra or missing fingers, extra or missing limbs, malformed hands, fused fingers, asymmetrical or unnatural anatomy, deformed face, mutated body parts, unnatural body scaling, reduced breast size, reduced hip size, slimmed waist beyond reference, skinny body, athletic thin body, age regression, teenage appearance, different face, identity drift, porcelain skin, plastic skin, waxy skin, airbrushed flawless skin, doll-smooth skin, blurred pores, heavy beauty filter skin.
+- It must always include realism safeguards: perfectly symmetrical face, mirrored identical features, uniform flawless skin color, helmet hair, uniformly clumped hair, floating fabric, shadowless floating volumes, evenly wrapped beauty glow, mannequin pose, frozen statue expression, misaligned eye direction, creaseless joints, veinless hands.
 - It must always include general quality/consistency safeguards: inconsistent with reference, changed identity, changed outfit not requested, changed background not requested, changed pose not requested, low quality, blurry, distorted, watermark, text, signature, extra objects, duplicate subject, cropped body parts, unrealistic lighting, mismatched perspective.
 - The negative prompt must stay consistent with and refer back to the main prompt — it exists to lock in what the main prompt already describes (the subject, outfit, environment, pose, proportions), not to introduce new ideas or contradict the main prompt.
 - Do not turn the negative prompt into a sentence or explanation. It is a flat comma-separated list of short terms.
-- The negative prompt does not count toward the 250-500 word limit above; keep it concise, typically 25 to 60 words.
+- The negative prompt does not count toward the 300-550 word limit above; keep it concise, typically 25 to 60 words.
 
 OUTPUT FORMAT (strict):
 Output exactly two parts, nothing else:
-1. The main prompt (250-500 words), as plain paragraphs.
+1. The main prompt (300-550 words), as plain paragraphs.
 2. A blank line, then a line that starts exactly with "Negative prompt:" followed by the comma-separated negative prompt on the same line.
 
 Do not mention that you are an AI.
@@ -145,6 +198,21 @@ No character name is used. Match purely by phenotype against the canonical descr
 - NEVER change her body volume, face, height impression, skin markers, or hair across any scene. Keep the exact proportions from the reference photo in every frame. If shots differ in lighting or makeup, lock the clearest fairest view as canonical and stay consistent everywhere.
 
 === END PRIMARY CHARACTER ANCHOR ===
+
+
+=== REALISM HARDENING FOR VIDEO (MOTION IS PROOF OF LIFE) ===
+
+The canonical photo is stylized, but the VIDEO must read as footage of a real living woman. Enforce in every scene:
+
+- Motion proves mass: her very large bust settles and lags slightly behind torso movement before taking new position, soft secondary sway; her hips, thighs and butt show real weight — compression and faint soft ripple on every weight shift; fabric drags, then catches up
+- She is never a held statue: continuous breathing cycle (chest and collarbones rise), micro-sway when standing, tiny stance corrections, natural irregular blinking, eyes micro-refocusing toward the camera
+- Physics stays on: her weight visibly rests on whatever supports her; contact patches (soles on floor, thighs touching) show believable pressure and rebound
+- Skin stays alive in motion: dewy T-zone sheen shifts with angle, ear rims and fingertips keep subsurface warmth, pores remain visible in close frames — no texture melting, no smoothing during motion
+- Micro-expressions evolve continuously: her canonical heavy-lidded gaze breathes — slow squints, uneven brow lifts, lip corners adjusting, jaw tone changing; never one frozen mask across frames
+- Camera observes like a real device: handheld micro-drift, gentle focus breathing on close-ups, natural parallax; avoid perfectly static doll-like framing
+- Motion realism must never alter the canonical structure: face shape, body volume, height impression, skin markers and hair stay locked in every frame
+
+=== END REALISM HARDENING FOR VIDEO ===
 
 CORE PRINCIPLE — THE PHOTO IS THE ANCHOR FRAME:
 The reference photo(s) show the exact subject that must appear, unchanged in identity, throughout the entire generated video. Everything you write must describe MOTION and CHANGE that could plausibly start from that exact photo, not a different-looking subject or scene.
@@ -191,6 +259,7 @@ LENGTH REQUIREMENT (strict):
 NEGATIVE PROMPT REQUIREMENT (strict):
 After all scenes, produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-to-video model must avoid.
 - Always include identity/consistency safeguards: identity drift, face morphing between frames, changing facial features, inconsistent hairstyle, inconsistent outfit between scenes, changing skin tone, altered body proportions, changed body shape, porcelain skin texture, airbrushed flawless skin, waxy plastic skin, character teleporting, background inconsistency, environment changing unexpectedly.
+- Always include realism/motion safeguards: perfectly symmetrical face, mirrored identical features, frozen statue expression, mannequin stillness, floating fabric, uniformly clumped hair, misaligned eye direction, helmet hair.
 - Always include anatomy/motion safeguards: distorted body proportions, extra or missing fingers, extra or missing limbs, malformed hands, unnatural limb bending, physics-defying motion, warped anatomy during movement, unnatural body scaling.
 - Always include general video-artifact safeguards: flickering, frame jitter, temporal inconsistency, motion blur artifacts, unnatural frame interpolation, low quality, blurry, distorted, watermark, text overlay, subtitles, extra objects appearing, duplicate subject, unrealistic lighting changes, mismatched perspective, static frozen frame with no motion, unrealistic camera movement.
 - Keep it a flat comma-separated list, typically 25 to 60 words, not a sentence or explanation.
@@ -211,16 +280,16 @@ ${NSFW_UNRESTRICTED_SKILL}
 `;
 
 const MAX_TELEGRAM_MESSAGE = 3900;
-const DEFAULT_MIN_WORDS = 250;
-const DEFAULT_MAX_WORDS = 500;
+const DEFAULT_MIN_WORDS = 300;
+const DEFAULT_MAX_WORDS = 550;
 const MAX_LENGTH_RETRIES = 2;
 const DEFAULT_MAX_IMAGES = 5;
-const PENDING_TTL_MS = 30 * 60 * 1000; // 30 minutes, same as previous KV TTL
+const PENDING_TTL_MS = 30 * 60 * 1000; // 30 minutes, same as the previous KV TTL
 
 // Durable Object: stores the "photo awaiting instruction" session per chatId.
 // One DO instance per chatId handles all requests sequentially,
 // so read-after-write is always consistent (no more race/propagation
-// delays like in Cloudflare KV).
+// delay like in Cloudflare KV).
 export class ChatSession {
   constructor(state, env) {
     this.state = state;
@@ -366,7 +435,7 @@ async function sessionDeletePending(env, chatId) {
   });
 }
 
-// Get the active mode for this chat: "image" (default, edit photo) or "video" (image-to-video).
+// Get the active mode for this chat: "image" (default, photo edit) or "video" (image-to-video).
 async function sessionGetMode(env, chatId) {
   const stub = getChatSessionStub(env, chatId);
   if (!stub) return "image";
@@ -564,7 +633,7 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "👋 Welcome to Prompt Vision Bot!\n\n" +
-      "🖼️ Default mode: EDIT PHOTO. Send reference photos, then send the editing instructions in Indonesian — I will produce detailed English image-editing prompts.\n\n" +
+      "🖼️ Default mode: EDIT PHOTO. Send reference photos, then send the edit instructions in Indonesian — I will produce detailed English image-editing prompts.\n\n" +
       "🎬 VIDEO mode: type /video to switch. Send reference photos + instructions, I will produce per-scene image-to-video prompts (movement, camera, lighting) that keep the character/identity from the photo consistent.\n\n" +
       "🔒 Main character locked: identity & body lock active based on canonical reference photos (no name — matched purely through facial features and body proportions).\n\n" +
       "Type /help for full details."
@@ -765,8 +834,8 @@ async function handleTelegramUpdate(update, env) {
         await telegramSendMessage(
           env,
           chatId,
-          "📷 Send reference photos first, then write the changes.\n\n" +
-          "You can send more than one photo for one scene, or reply to a photo that has already been sent with your instructions."
+          "📷 Send reference photos first, then write the change instructions.\n\n" +
+          "You can send more than one photo for one scene, or reply to a photo that has been sent with your instructions."
         );
 
         return;
@@ -1046,8 +1115,8 @@ function countWords(text) {
 
 // Split the model output into { main, negative }.
 // The model is instructed to always end with the line "Negative prompt: ...".
-// If that line is missing (the model forgot the format), negative is left empty and
-// the entire text is treated as the main prompt so that no data is lost.
+// If that line is missing (the model forgets the format), negative is left empty and
+// the entire text is treated as the main prompt so no data is lost.
 function splitPromptAndNegative(text) {
   const raw = String(text || "").trim();
   const match = raw.match(/(^|\n)\s*Negative prompt\s*:\s*/i);
@@ -1089,7 +1158,7 @@ function trimToMaxWords(text, maxWords) {
   return cut.trim();
 }
 
-// Ask the model to produce a 250-500 word prompt; retry if outside the limits.
+// Ask the model to produce a prompt of 300-550 words; retry if outside the limits.
 async function generatePromptWithinLimits(
   env,
   imageDataUrls,
@@ -1132,8 +1201,8 @@ async function generatePromptWithinLimits(
       previousPrompt: rawOutput,
       note:
         words < minWords
-          ? `Your previous main prompt was only ${words} words, which is too short. Rewrite it so the main prompt is between ${minWords} and ${maxWords} words (aim for about 400). Add concrete visual detail about preserved elements and the requested change. Keep the same output format, including the "Negative prompt:" line at the end.`
-          : `Your previous main prompt was ${words} words, which is too long. Rewrite it so the main prompt is between ${minWords} and ${maxWords} words (aim for about 400). Keep the most important details and remove redundancy. Keep the same output format, including the "Negative prompt:" line at the end.`
+          ? `Your previous main prompt was only ${words} words, which is too short. Rewrite it so the main prompt is between ${minWords} and ${maxWords} words (aim for about 460). Add concrete visual detail about preserved elements, realism hardening details, and the requested change. Keep the same output format, including the "Negative prompt:" line at the end.`
+          : `Your previous main prompt was ${words} words, which is too long. Rewrite it so the main prompt is between ${minWords} and ${maxWords} words (aim for about 460). Keep the most important details and remove redundancy. Keep the same output format, including the "Negative prompt:" line at the end.`
     };
   }
 
@@ -1145,7 +1214,7 @@ async function generatePromptWithinLimits(
 }
 
 // Ask the model to produce a per-scene image-to-video prompt ("Scene 1 (0-3s): ...")
-// followed by "Negative prompt:". Retry if the scene/negative format is not yet met.
+// followed by "Negative prompt:". Retry if the scene/negative format is not met.
 async function generateVideoPrompt(env, imageDataUrls, instruction) {
   let feedback = null;
   let lastRawOutput = null;
@@ -1186,7 +1255,7 @@ async function generateVideoPrompt(env, imageDataUrls, instruction) {
   }
 
   // All attempts failed to meet the strict format: fallback to best-effort split
-  // so the user still gets something usable, not an empty error.
+  // so the user still gets something usable, not a blank error.
   const { main, negative } = splitPromptAndNegative(lastRawOutput);
   return joinPromptAndNegative(main, negative || "");
 }
@@ -1233,10 +1302,10 @@ async function callJerouter(
           `You are given ${urls.length} reference images of the same scene/subject. ` +
           "Understand this instruction in Indonesian and generate ONE final image-editing prompt in English " +
           "that treats all the images together as one coherent scene. " +
-          "The prompt must be between 250 and 500 words."
+          "The prompt must be between 300 and 550 words."
         : `User instruction (Indonesian):\n${instruction}\n\n` +
           "Understand this instruction in Indonesian and generate the final image-editing prompt in English. " +
-          "The prompt must be between 250 and 500 words.");
+          "The prompt must be between 300 and 550 words.");
 
   const userContent = [{ type: "text", text: introText }];
 
@@ -1267,7 +1336,7 @@ async function callJerouter(
 
   const requestBody = { model, messages };
 
-  // TEMPERATURE = "" atau "none" -> temperature parameter is not sent
+  // TEMPERATURE = "" atau "none" -> temperature parameter isn't sent
   // (some reasoning models reject this parameter).
   const tempRaw = env.TEMPERATURE === undefined ? "0.35" : String(env.TEMPERATURE).trim();
   if (tempRaw !== "" && tempRaw.toLowerCase() !== "none") {
@@ -1284,7 +1353,7 @@ async function callJerouter(
   const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504, 520, 522, 524]);
   const MAX_HTTP_RETRIES = 1;
 
-  // Model list: primary first, then fallback (JEROUTER_FALLBACK_MODEL) on timeout/server error.
+  // Model list: main first, then backup (JEROUTER_FALLBACK_MODEL) on timeout/server error.
   const modelList = [model];
   if (env.JEROUTER_FALLBACK_MODEL && env.JEROUTER_FALLBACK_MODEL !== model) {
     modelList.push(env.JEROUTER_FALLBACK_MODEL);
@@ -1323,7 +1392,7 @@ async function callJerouter(
       await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
     }
 
-    // Success -> done. Server failure/timeout and a fallback model still exists -> try the next model.
+    // Success -> done. Server failure/timeout and a backup model still exists -> try the next model.
     if (response && response.ok) break;
     if (m < modelList.length - 1) {
       console.warn("JEROUTER_FALLBACK", { from: modelList[m], to: modelList[m + 1], status: response?.status });
