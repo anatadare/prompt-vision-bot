@@ -803,16 +803,20 @@ async function processImageInstruction(
   try {
     const ids = Array.isArray(fileIds) ? fileIds : [fileIds];
 
+    const model = env.JEROUTER_MODEL || "step-5-unrestricted";
+    const fallback = env.JEROUTER_FALLBACK_MODEL || "";
+
+    // Pesan status awal
     await telegramSendMessage(
       env,
       chatId,
       isVideo
         ? (ids.length > 1
-            ? `🎬 Menganalisis ${ids.length} foto referensi dan menyusun prompt video per scene...`
-            : "🎬 Menganalisis foto referensi dan menyusun prompt video per scene...")
+            ? `🎬 Memproses ${ids.length} foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
+            : "🎬 Memproses foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram")
         : (ids.length > 1
-            ? `🔍 Analyzing ${ids.length} reference photos and generating your prompt...`
-            : "🔍 Analyzing the reference image and generating your prompt...")
+            ? `🔍 Memproses ${ids.length} foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
+            : "🔍 Memproses foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram")
     );
 
     console.log("TELEGRAM_FILE_REQUEST", {
@@ -825,15 +829,26 @@ async function processImageInstruction(
       ids.map((id) => downloadTelegramImage(env, id))
     );
 
+    const totalKB = Math.round(
+      imageDataUrls.reduce((sum, u) => sum + u.length, 0) / 1024
+    );
+
     console.log("TELEGRAM_FILE_DOWNLOADED", {
       chatId,
       count: imageDataUrls.length,
       totalBytes: imageDataUrls.reduce((sum, u) => sum + u.length, 0)
     });
 
+    // Status: foto sudah diunduh, sekarang kirim ke AI
+    await telegramSendMessage(
+      env,
+      chatId,
+      `✅ Langkah 1/3 selesai — ${ids.length} foto diunduh (${totalKB} KB total)\n\n⏳ Langkah 2/3 — Mengirim ke model AI\n🤖 Model: ${model}${fallback ? ` (cadangan: ${fallback})` : ""}`
+    );
+
     console.log("JEROUTER_REQUEST", {
       chatId,
-      model: env.JEROUTER_MODEL || "qwen3.8-27b-unsencored",
+      model,
       images: imageDataUrls.length,
       mode
     });
@@ -848,6 +863,13 @@ async function processImageInstruction(
       words: countWords(prompt),
       mode
     });
+
+    // Status: AI selesai, sekarang kirim hasilnya
+    await telegramSendMessage(
+      env,
+      chatId,
+      `✅ Langkah 2/3 selesai — AI selesai berpikir (${countWords(prompt)} kata)\n\n⏳ Langkah 3/3 — Mengirim prompt ke kamu`
+    );
 
     await sendLongTelegramMessage(
       env,
@@ -1246,35 +1268,52 @@ async function callJerouter(
 
   const url = `${baseUrl.replace(/\/$/, "")}/chat/completions`;
   const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504, 520, 522, 524]);
-  const MAX_HTTP_RETRIES = 3;
+  const MAX_HTTP_RETRIES = 1;
+
+  // Daftar model: utama dulu, lalu cadangan (JEROUTER_FALLBACK_MODEL) bila timeout/error server.
+  const modelList = [model];
+  if (env.JEROUTER_FALLBACK_MODEL && env.JEROUTER_FALLBACK_MODEL !== model) {
+    modelList.push(env.JEROUTER_FALLBACK_MODEL);
+  }
 
   let response;
   let rawText = "";
 
-  for (let i = 0; i <= MAX_HTTP_RETRIES; i++) {
-    try {
-      response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify(requestBody)
-      });
+  for (let m = 0; m < modelList.length; m++) {
+    requestBody.model = modelList[m];
 
-      rawText = await response.text();
+    for (let i = 0; i <= MAX_HTTP_RETRIES; i++) {
+      try {
+        response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify(requestBody)
+        });
 
-      if (!RETRYABLE_STATUS.has(response.status) || i === MAX_HTTP_RETRIES) {
-        break;
+        rawText = await response.text();
+
+        if (!RETRYABLE_STATUS.has(response.status) || i === MAX_HTTP_RETRIES) {
+          break;
+        }
+
+        console.warn("JEROUTER_RETRY", { model: modelList[m], attempt: i, status: response.status });
+      } catch (err) {
+        if (i === MAX_HTTP_RETRIES && m === modelList.length - 1) throw err;
+        if (i === MAX_HTTP_RETRIES) break;
+        console.warn("JEROUTER_NETWORK_RETRY", { model: modelList[m], attempt: i, err: String(err) });
       }
 
-      console.warn("JEROUTER_RETRY", { attempt: i, status: response.status });
-    } catch (err) {
-      if (i === MAX_HTTP_RETRIES) throw err;
-      console.warn("JEROUTER_NETWORK_RETRY", { attempt: i, err: String(err) });
+      await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
     }
 
-    await new Promise((r) => setTimeout(r, 2000 * (i + 1))); // 2s, 4s, 6s
+    // Sukses -> selesai. Gagal server/timeout dan masih ada model cadangan -> coba model berikutnya.
+    if (response && response.ok) break;
+    if (m < modelList.length - 1) {
+      console.warn("JEROUTER_FALLBACK", { from: modelList[m], to: modelList[m + 1], status: response?.status });
+    }
   }
 
   let data;
