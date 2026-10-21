@@ -3,7 +3,7 @@ main = "src/index.js"
 compatibility_date = "2026-09-24"
 
 [vars]
-JEROUTER_BASE_URL = "https://jerouter-relay-ygr0z1n0j044.anatadare.deno.net/v1"
+JEROUTER_BASE_URL = "https://je.jerouter.web.id/v1"
 JEROUTER_MODEL = "step-5-unrestricted"
 TEMPERATURE = "0.35"
 MAX_TOKENS = "5000"
