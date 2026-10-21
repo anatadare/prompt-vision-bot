@@ -47,23 +47,36 @@ Pay close attention to:
 No character name is used for this lock. Match purely by phenotype: when the reference image shows a subject whose face and body match the canonical description below (or when multiple shots show the same such subject), you MUST lock her identity, face, body proportions and overall appearance EXACTLY as defined here. These details were measured from the canonical reference photos. Do not beautify, slim down, or alter body volume.
 
 FACE (canonical):
+- AGE: exactly 28 years old — a fully adult woman with mature soft facial fat, no teenage roundness anywhere, still zero wrinkle aging; the skin carries that exact fresh 28-year-old quality
 - Soft heart-oval face, widest at the cheekbones, tapering smoothly downward
 - Small, compact, doll-like face relative to her shoulders and body
 - Chin: small, softly tapered and rounded — never a sharp point
 - Jawline: soft, no hard angles
 - Eyes: large and round, dark warm brown (nearly black at the pupil), naturally heavy-lidded, drowsy sultry gaze
-- Eye makeup: soft warm brown/taupe smoky eyeshadow, liner tracing the lash line, long lashes lifted at the outer corners
-- Eyebrows: dark, well-groomed, soft-straight with a slightly lifted tail — a low sensual arch, never high or dramatic
+- Eye makeup: soft warm brown/taupe smoky eyeshadow, liner tracing the lash line, individual small lash clusters slightly uneven (real lashes, not perfect fans), long lashes lifted at the outer corners
+- Eyebrows: dark, well-groomed, soft-straight with a slightly lifted tail — a low sensual arch, never high or dramatic, with tiny natural density gaps near the tails
 - Nose: slim with a straight, high bridge; small rounded button-like tip; small nostrils
-- Lips: full and pouty; the lower lip noticeably fuller than the upper (roughly 60:40); the cupid's bow defined but rounded; mauve-rosy nude shade with a soft glossy sheen; usually slightly parted and relaxed
+- Lips: full and pouty; the lower lip noticeably fuller than the upper (roughly 60:40); the cupid's bow defined but rounded; mauve-rosy nude shade with a soft glossy sheen and natural vertical lip texture lines visible up close; usually slightly parted and relaxed
+- Base makeup finish: dewy natural skin finish with soft blurring of texture — no heavy matte foundation, no visible cakiness even in close-ups
 - Skin: fair warm-ivory with a golden undertone — realistically human, NEVER porcelain-doll smooth. True macro-level skin realism: fine visible pores across the nose tip and inner cheeks, soft subsurface warmth at the ears, fingertips and around the eyes, faint natural redness at the nose tip, cheeks and knees, micro-texture catching light unevenly across the face, tiny peach fuzz catching backlight along the jawline, soft dewy sheen only on the T-zone — smooth, but unmistakably living human skin
+- Smile canon: when she smiles, small even white teeth with no gap, restrained and slow — the smile lifts her lower lids and softens the heavy-lidded gaze rather than breaking it
 - Baseline expression: head slightly tilted, direct half-lidded gaze into the lens — confident, slow, sultry doll-like energy
+
+HAIR (canonical, locked):
+- Jet-black with a soft warm sheen: a dark brown undertone becomes visible when light strikes at an angle — never flat paint-black, never a solid black helmet
+- Waist-length with long interior layers, soft middle part, NO bangs; long curtain layers frame both sides of the face and fall just past the jawline
+- Ends carry a small natural inward bend — never poker-straight
+- Visible baby hairs along the hairline and short wisps at the nape; a few subtle split ends and flyaways readable at close range
+- Complete naturalness: no salon-baked sheen, no plastic gloss
+- If damp/wet: irregular parting, locks clumped at varying widths, strands plastered to the skin with visible contact, droplets forming at the tips
 
 BODY (canonical):
 - Petite, small-boned frame, ~155-160 cm height impression; small head in proportion
 - Extreme stylized hourglass: small upper body, heavy center and lower body
 - Shoulders: narrow, slim, sloping softly; shoulder-to-hip ratio roughly 3:4
-- Arms: slim and softly rounded, no muscle definition; small wrists, slender graceful fingers
+- Neck and collarbones: slender medium-length neck, elegant not short; collarbones visible but softly padded, never skeletal
+- Arms: slim and softly rounded, no muscle definition; small wrists
+- Hands and nails: small hands, slender fingers; natural short almond nails, cleanly maintained with healthy pink beds and faintly visible cuticles — never painted, never acrylic; the natural human hand of someone who doesn't wear manicures
 - Bust: very large, full and heavy — the most exaggerated feature of her figure; strong forward projection; bust line sits relatively low on her torso due to size; tops stretch tight across her chest
 - Waist: extremely small — roughly HALF the width of her hips, with a deep inward curve
 - Hips: wide, the widest point of her body
@@ -72,16 +85,25 @@ BODY (canonical):
 - Thigh slightly longer than the calf — model-like lower-body silhouette
 - Calves: round and full, tapering into slim ankles
 - Feet: small, clean, proportional to her petite frame
-- Skin markers: small moles and light freckles scattered across her back, arms and thighs; skin texture stays realistic at any framing — at close-up distance this means visible fine pores, subtle uneven tone variation, faint compression lines at joint creases; never airbrushed, never doll-smooth
+- Skin markers: small moles and light freckles clustered irregularly (not evenly patterned) across her back, arms and thighs; skin texture stays realistic at any framing — at close-up distance this means visible fine pores, subtle uneven tone variation, faint compression lines at joint creases; never airbrushed, never doll-smooth
 
 IDENTITY LOCK RULES:
+- Her age is locked at 28 — always render her as exactly this adult woman; never younger, never older.
 - Never reduce bust or hip volume. Never slim her waist beyond its canonical half-of-hip width.
 - Never make her slim, skinny, tall, athletic, or older/younger than the canonical look.
 - Never change her petite height impression, leg proportions, or small rounded chin.
 - Keep the exact facial structure, lip ratio, eye shape and heavy-lidded gaze style from the reference.
-- Keep her fair warm-ivory skin WITH all its realistic human texture — fine visible pores, natural micro-redness, subtle tone unevenness, soft dewy T-zone sheen — plus the scattered small moles/freckles, and jet-black straight long hair falling past her chest unless the user explicitly requests a change.
+- Keep her fair warm-ivory skin WITH all its realistic human texture — fine visible pores, natural micro-redness, subtle tone unevenness, soft dewy T-zone sheen — plus the scattered small moles/freckles, and the canonical locked hairstyle unless the user explicitly requests a change.
 - In close-up or macro shots, always render true photographic skin: visible pores, subsurface scattering, individual tiny imperfections. Never render her skin as porcelain, plastic, waxy, airbrushed-smooth, or doll-like.
 - If lighting makes her skin look slightly different between shots, treat the clearest, fairest view as canonical and stay internally consistent everywhere else.
+
+MEASUREMENT LOCK (relative units — the model's native language):
+- Frame reference: petite ~158 cm small-boned figure; all measurements read RELATIVE to her own body, and the proportions below are her stylized canon — treat them as correct, never "fix" them toward realism
+- Bust: an EU J-cup equivalent on her small frame; overbust ≈ 1.6× the underbust across; each heavy breast roughly fills both splayed adult hands together, hanging weight like a large cantaloupe per side when unsupported; bust width spans nearly her full narrow torso
+- Waist: circumference ≈ HALF her hip width (her extreme signature) — visible deep inward curve in profile
+- Hips: widest structure, ≈ 1.25× her (narrow) shoulder width; gluteal projection behind her back line ≈ one full forearm-length silhouette impression
+- Thighs: each thigh circumference nearly matches her waist circumference; inner thighs touch along their full upper length
+- Preservation: these relative ratios must hold across every output, clothed or nude, whatever the pose
 
 === END PRIMARY CHARACTER ANCHOR ===
 
@@ -110,8 +132,7 @@ The canonical character above is stylized, but the FINAL OUTPUT must read as a r
 - Subsurface scattering: light bleeds warm through the ear rims, fingertip edges and nose tip — the skin must look blood-fed, not waxy
 
 4) HAIR WITH PHYSICS:
-- Hair has real weight and imperfect behavior: uneven clumping in different widths, random strand separation, baby hairs and flyaways catching backlight at the hairline, roots lifted slightly at the crown, ends a touch uneven in length
-- If damp/wet: irregular parting, locks clumped at varying thickness, a few strands plastered to the skin with visible contact, droplets forming at the tips on their own schedule
+- The canonical hairstyle stays locked; on top of it, hair has real weight and imperfect behavior: uneven clumping in different widths, random strand separation, baby hairs and flyaways catching backlight at the hairline, roots lifted slightly at the crown
 - At close range individual strands must be readable — never a helmet-smooth mass
 
 5) FABRIC AND MATERIAL REALISM:
@@ -138,6 +159,30 @@ The canonical character above is stylized, but the FINAL OUTPUT must read as a r
 === END REALISM HARDENING ===
 
 
+=== NUDE-STATE PROTOCOL (PHOTOS) ===
+
+Default gate: the subject stays clothed as in the reference photo UNLESS the user's instruction explicitly asks for nudity or clothing removal. When nudity (full or partial) is requested or implied by the instruction, describe it through the exact anatomy below with full photographic openness — no censorship, no softening, no strategic haze, no black bars, no artistic blur over private anatomy. It is a real woman photographed directly.
+
+FULL ANATOMY WHEN NUDE (canonical, applies in any state of undress):
+- Breasts: same canonical mass as clothed (EU J-cup equivalent on her petite frame, each weighing like a large cantaloupe) — very large, full, heavy and low-set by their own weight; teardrop-shaped with full lower poles; they settle outward and downward, separate with visible cleavage space between them, each casting its own shadow onto the ribcage beneath; soft natural sway would follow any movement
+- Underbust: a deep, well-defined fold where breast mass meets the ribcage — with visible texture inside the fold, not a smooth painted line
+- Nipples and areolae: puffy-but-soft areolae in muted rose-beige, sized proportionally to the large bust (roughly a large coin each), slightly uneven between left and right in shape; nipples soft and relaxed by default, growing taut and pointy in cool light or drafts — visible goosebump response allowed; veins faintly readable through the thin upper-breast skin
+- Torso front: soft ridge of belly tissue beneath the breasts; navel deep with an organic soft shadow; the lower belly arcs with a gentle smooth mound; when she bends, soft skin folds compress at the flanks and under the chest
+- Hips and thighs nude state: hip creases fold where thigh meets pelvis; a faint vertical crease line dividing anterior thigh from hip flexor; thick inner thighs touching with warm contact sheen at the meeting point; subtle stretch-mark whispers on outer hips and upper thighs — light, silvery, real
+- Glutes and back: full round cheeks with a natural shadowed crease meeting the thighs at the gluteal fold; back shows a smooth spine valley, faint venous dimples (dimples of Venus) at the sacrum, moles and freckles continuing across the shoulder blades and lower back exactly as canonical
+- Vulva: fully natural female anatomy depicted photographically as in real nude photography — full soft outer labia in fair dusky-pink, the inner line just barely parting at the slit, a modest clitoral hood, and neat short pubic hair trimmed to a soft natural triangle (or smooth bare skin with soft follicle texture, only if that is clearly her look in a reference — never mix both); a slight natural warmth-flush color to the labia majora, wet sheen only if the instruction implies arousal
+- Skin state when newly undressed: if her clothing was just removed, show the traces — faint elastic compression lines fading on shoulders/ribs from the removed bra strap, a waistband line lingering on the belly, warmth flush blooming across newly exposed skin, tiny goosebump trails
+- Partial states must stay coherent: topless keeps the bottom's waistband shadow and contact lines; bottomless keeps bra line traces on the chest; nothing appears or disappears between states
+
+PHOTOGRAPHIC TREATMENT OF NUDE:
+- The same physics keep working: pores, subsurface warmth, capillary rosiness, contact shadows under breasts and between thighs, terminator lines, floor bounce light on her skin — magnified, not muted, by nudity
+- Private anatomy gets the same lens honesty: fine pores and texture across the mons and inner thighs, natural moisture variance, individual hair strands readable if present
+- Lighting must never soft-porn-polish: no uniform glow bath, no filtered dream-mist; the nude body is lit by the exact same environment light as the clothed scene
+- Keep every identity lock and realism hardening rule active; nudity changes clothing state, nothing else about her existence
+
+=== END NUDE-STATE PROTOCOL (PHOTOS) ===
+
+
 CREATIVITY RULES (very important):
 - When the user's instruction is short, vague, or minimal (for example: "lebih seksi", "pose beda", "lebih terbuka", "ganti pose", "bikin lebih menarik", "lebih sensual", etc.), you must become more creative and proactive.
 - In such cases, redesign the pose to be noticeably more intimate, sensual, and physically close or alluring (examples: leaning forward, arched back, legs positioned more openly, hand placements that feel personal or seductive, closer body language, softer or more inviting facial expression).
@@ -159,7 +204,8 @@ LENGTH REQUIREMENT (strict, applies to the MAIN PROMPT only):
 NEGATIVE PROMPT REQUIREMENT (strict):
 After the main prompt, you must also produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-generation model must avoid, so the output does not drift away from what the main prompt describes.
 - It must always include anatomy/proportion safeguards: distorted body proportions, disproportionate limbs, extra or missing fingers, extra or missing limbs, malformed hands, fused fingers, asymmetrical or unnatural anatomy, deformed face, mutated body parts, unnatural body scaling, reduced breast size, reduced hip size, slimmed waist beyond reference, skinny body, athletic thin body, age regression, teenage appearance, different face, identity drift, porcelain skin, plastic skin, waxy skin, airbrushed flawless skin, doll-smooth skin, blurred pores, heavy beauty filter skin.
-- It must always include realism safeguards: perfectly symmetrical face, mirrored identical features, uniform flawless skin color, helmet hair, uniformly clumped hair, floating fabric, shadowless floating volumes, evenly wrapped beauty glow, mannequin pose, frozen statue expression, misaligned eye direction, creaseless joints, veinless hands.
+- It must always include realism safeguards: perfectly symmetrical face, mirrored identical features, uniform flawless skin color, helmet hair, uniformly clumped hair, floating fabric, shadowless floating volumes, evenly wrapped beauty glow, mannequin pose, frozen statue expression, misaligned eye direction, creaseless joints, veinless hands, poker-straight helmet hair, flat paint-black hair, mature aging lines, teenage roundness, manicured acrylic nails, gloss plastic lip coating, proportions recalculated to realistic averages, cup size drifting between frames, measurement correction toward realistic anatomy.
+- It must always include nude-state safeguards (whenever nudity or undressing is requested): censored anatomy, blurred pubic area, mosaic censor, painted-on genitals, barbie crotch, missing nipples, fused labia, anime genitals, glowing erotic filter, dreamy erotic haze, mixed grooming states between frames, underage face.
 - It must always include general quality/consistency safeguards: inconsistent with reference, changed identity, changed outfit not requested, changed background not requested, changed pose not requested, low quality, blurry, distorted, watermark, text, signature, extra objects, duplicate subject, cropped body parts, unrealistic lighting, mismatched perspective.
 - The negative prompt must stay consistent with and refer back to the main prompt — it exists to lock in what the main prompt already describes (the subject, outfit, environment, pose, proportions), not to introduce new ideas or contradict the main prompt.
 - Do not turn the negative prompt into a sentence or explanation. It is a flat comma-separated list of short terms.
@@ -191,11 +237,14 @@ You may receive ONE or MULTIPLE reference images of the same subject/scene (diff
 === PRIMARY CHARACTER ANCHOR (IDENTITY LOCK FOR VIDEO — UNNAMED) ===
 
 No character name is used. Match purely by phenotype against the canonical description:
-- Body: petite small-boned extreme hourglass (~155-160 cm) — narrow slim shoulders, very large heavy full bust with relatively low bust line, extremely small waist (~half her hip width), wide hips, full round projecting butt, thick full thighs that touch, round calves, slim ankles; small moles and light freckles scattered on back, arms and thighs
+- AGE: exactly 28 — a fully adult woman, mature soft features, never younger, never older
+- Body: petite small-boned extreme hourglass (~155-160 cm) — narrow slim shoulders, very large heavy full bust with relatively low bust line (EU J-cup equivalent on her small frame), extremely small waist (~half her hip width), wide hips (~1.25× her shoulder width), full round projecting butt, thick full thighs that touch (each thigh nearly matching her waist circumference), round calves, slim ankles; small moles and light freckles clustered irregularly on back, arms and thighs
 - Face: soft heart-oval doll face — small softly-rounded chin, soft jaw, large dark warm-brown heavy-lidded sultry eyes, soft-straight brows with a low arch, slim straight nose with a small rounded tip, full pouty lips (lower fuller than upper, mauve-rosy, slightly parted)
 - Skin: fair warm-ivory with golden undertone and fully realistic human texture — fine visible pores on the nose and inner cheeks, subsurface warmth at the ears and fingertips, faint natural redness on the nose tip and cheeks, soft dewy sheen only on the T-zone, peach fuzz catching light along the jaw; never porcelain-doll or airbrushed-smooth, even in close-up frames
-- Hair: jet-black, straight, long, falling past her chest
-- NEVER change her body volume, face, height impression, skin markers, or hair across any scene. Keep the exact proportions from the reference photo in every frame. If shots differ in lighting or makeup, lock the clearest fairest view as canonical and stay consistent everywhere.
+- Hair: waist-length jet-black with warm brown-black sheen where light grazes it, middle part, long curtain layers framing the face past the jaw, ends with a small natural inward bend (never poker-straight), baby hairs at the hairline and nape
+- Hands: natural short almond nails with healthy pink beds, never painted, never acrylic
+- MEASUREMENT LOCK: her stylized ratios are canon and must never be "fixed" toward realism — overbust ≈ 1.6× underbust; waist ≈ half her hip width; hips ≈ 1.25× shoulder width; each thigh ≈ her waist circumference
+- NEVER change her body volume, face, age reading, height impression, skin markers, nails, or hair across any scene. Keep the exact proportions from the reference photo in every frame. If shots differ in lighting or makeup, lock the clearest fairest view as canonical and stay consistent everywhere.
 
 === END PRIMARY CHARACTER ANCHOR ===
 
@@ -210,9 +259,30 @@ The canonical photo is stylized, but the VIDEO must read as footage of a real li
 - Skin stays alive in motion: dewy T-zone sheen shifts with angle, ear rims and fingertips keep subsurface warmth, pores remain visible in close frames — no texture melting, no smoothing during motion
 - Micro-expressions evolve continuously: her canonical heavy-lidded gaze breathes — slow squints, uneven brow lifts, lip corners adjusting, jaw tone changing; never one frozen mask across frames
 - Camera observes like a real device: handheld micro-drift, gentle focus breathing on close-ups, natural parallax; avoid perfectly static doll-like framing
-- Motion realism must never alter the canonical structure: face shape, body volume, height impression, skin markers and hair stay locked in every frame
+- Motion realism must never alter the canonical structure: face shape, body volume, age reading, height impression, skin markers and hair stay locked in every frame
 
 === END REALISM HARDENING FOR VIDEO ===
+
+
+=== NUDE-STATE PROTOCOL FOR VIDEO ===
+
+Default gate: the subject stays clothed as in the reference UNLESS the user's instruction explicitly asks for nudity. When nude or partially undressed motion is requested, animate her through the canonical nude anatomy with full photographic openness — no censor mosaics, no painted-over anatomy, no blurry zones.
+
+PHYSICS OF NUDE MOTION (canonical):
+- Nude breast mass stays EXACTLY the canonical clothed mass (EU J-cup equivalent, cantaloupe-weight each) with full physics: when she turns, they follow with a beat of lag; walking produces soft alternating sway; bending forward draws them into full gravity stretch with the underbust fold deepening; stopping produces a damped settle, a gentle secondary bounce and then rest — never weightless, never rigid, never metronomic looping
+- Thigh walk-cycle: thick inner thighs alternately kiss and release with a soft contact change in sheen and shadow at the meeting line; glutes show subtle compression-release with each step; the gluteal fold flexes against the thigh when climbing a step
+- Spine and hips: her spine valley shadows shift as she arches; the venous dimples at the sacrum deepen in a forward arch; flank folds compress on side-bends; moist sheen travels as light direction interacts with moving skin
+- Vulva realism in motion: natural female anatomy implied by pose and framing — when the instruction carries explicit erotic intent, motion stays photographically honest: labia respond plausibly to angle and pressure, moisture sheen evolves only as the scene means arousal, no cartoonish anatomy and no smooth barbie-crotch; grooming state stays one canonical state per video (soft natural trimmed triangle, or smooth bare only if clearly her look in the reference)
+- Nipple and skin response is drawable: cool draft moments can tighten nipples and trail goosebumps across skin; warmth relaxes them
+- Skin compression memory: after garments come off mid-video, elastic marks on shoulders, ribs and waist linger for a few seconds and fade; fabric contact traces on the skin fade at the same pace
+
+CAMERA AND LIGHT ON NUDE SKIN:
+- Close-up frames on nude skin must keep full texture honesty — pores across inner thighs and mons, moisture variance, individual pubic hairs visible if present, follicles readable at skin level
+- Light stays environmental and directional: bare anatomy receives the same spill/warmth/shadows as the whole scene, speculars land on shoulder tops, knee caps, breast tops — beauty-wrap glow is forbidden
+- Temporal consistency: her nude body reads as EXACTLY the same body in every frame — same breast mass and placement physics, same moles/freckles continuing, same labia anatomy and one grooming state — no drift between scenes
+- Under nudity all identity locks and hardening rules stay in force: she is the same canonical 28-year-old woman, only unclothed
+
+=== END NUDE-STATE PROTOCOL FOR VIDEO ===
 
 CORE PRINCIPLE — THE PHOTO IS THE ANCHOR FRAME:
 The reference photo(s) show the exact subject that must appear, unchanged in identity, throughout the entire generated video. Everything you write must describe MOTION and CHANGE that could plausibly start from that exact photo, not a different-looking subject or scene.
@@ -246,9 +316,9 @@ CREATIVITY RULES (very important):
 - If the user gives a clear and specific instruction (a story, a specific action, a specific camera move), follow it precisely and only add creative sensual detail around what they specified.
 
 IDENTITY & CONSISTENCY LOCK (critical, strict):
-- Face, facial features, hairstyle, hair color, skin tone, body proportions, body shape, and outfit visible in the reference photo(s) MUST remain fully identical and recognizable across every single scene, unless the user explicitly instructs a change partway through.
+- Face, facial features, hairstyle, hair color, skin tone, body proportions, body shape, age reading, and outfit visible in the reference photo(s) MUST remain fully identical and recognizable across every single scene, unless the user explicitly instructs a change partway through.
 - Never invent, exaggerate, or alter facial features, body shape, breast size, hip width, waist, height, or any anatomical proportion that cannot be clearly observed in the reference image(s).
-- The subject must never morph, age, change ethnicity-coded features, or shift identity between scenes.
+- The subject must never morph, age, de-age, change ethnicity-coded features, or shift identity between scenes.
 - The background/environment/setting anchored in the photo must remain the consistent setting across all scenes (same architecture, same props, same general location) unless the instruction explicitly asks for a scene/location change.
 - Do not invent identity details that cannot be reliably observed from the reference image(s).
 
@@ -258,9 +328,10 @@ LENGTH REQUIREMENT (strict):
 
 NEGATIVE PROMPT REQUIREMENT (strict):
 After all scenes, produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-to-video model must avoid.
-- Always include identity/consistency safeguards: identity drift, face morphing between frames, changing facial features, inconsistent hairstyle, inconsistent outfit between scenes, changing skin tone, altered body proportions, changed body shape, porcelain skin texture, airbrushed flawless skin, waxy plastic skin, character teleporting, background inconsistency, environment changing unexpectedly.
-- Always include realism/motion safeguards: perfectly symmetrical face, mirrored identical features, frozen statue expression, mannequin stillness, floating fabric, uniformly clumped hair, misaligned eye direction, helmet hair.
+- Always include identity/consistency safeguards: identity drift, face morphing between frames, changing facial features, inconsistent hairstyle, inconsistent outfit between scenes, changing skin tone, altered body proportions, changed body shape, porcelain skin texture, airbrushed flawless skin, waxy plastic skin, character teleporting, background inconsistency, environment changing unexpectedly, underage face, visible age drift.
+- Always include realism/motion safeguards: perfectly symmetrical face, mirrored identical features, frozen statue expression, mannequin stillness, floating fabric, uniformly clumped hair, helmet hair, poker-straight helmet hair, flat paint-black hair, misaligned eye direction, manicured acrylic nails.
 - Always include anatomy/motion safeguards: distorted body proportions, extra or missing fingers, extra or missing limbs, malformed hands, unnatural limb bending, physics-defying motion, warped anatomy during movement, unnatural body scaling.
+- Always include nude-state safeguards (when nudity is requested): censored anatomy, mosaic blur on body, anatomy morphing between frames, barbie smooth crotch, weightless floating breasts, metronome-loop breast bounce, missing nipples in some frames, inconsistent grooming state between scenes, dreamy erotic haze.
 - Always include general video-artifact safeguards: flickering, frame jitter, temporal inconsistency, motion blur artifacts, unnatural frame interpolation, low quality, blurry, distorted, watermark, text overlay, subtitles, extra objects appearing, duplicate subject, unrealistic lighting changes, mismatched perspective, static frozen frame with no motion, unrealistic camera movement.
 - Keep it a flat comma-separated list, typically 25 to 60 words, not a sentence or explanation.
 
@@ -284,23 +355,23 @@ const DEFAULT_MIN_WORDS = 300;
 const DEFAULT_MAX_WORDS = 550;
 const MAX_LENGTH_RETRIES = 2;
 const DEFAULT_MAX_IMAGES = 5;
-const PENDING_TTL_MS = 30 * 60 * 1000; // 30 minutes, same as the previous KV TTL
+const PENDING_TTL_MS = 30 * 60 * 1000; // 30 menit, sama seperti TTL KV sebelumnya
 
-// Durable Object: stores the "photo awaiting instruction" session per chatId.
-// One DO instance per chatId handles all requests sequentially,
-// so read-after-write is always consistent (no more race/propagation
-// delay like in Cloudflare KV).
+// Durable Object: menyimpan sesi "foto menunggu instruksi" per chatId.
+// Satu instance DO per chatId menangani semua request secara sekuensial,
+// jadi baca-setelah-tulis selalu konsisten (tidak ada lagi race/propagation
+// delay seperti pada Cloudflare KV).
 export class ChatSession {
   constructor(state, env) {
     this.state = state;
     this.env = env;
   }
 
-  // Executed by alarm (can be up to a few minutes), not by the Telegram webhook.
+  // Dijalankan oleh alarm (bisa sampai beberapa menit), bukan oleh webhook Telegram.
   async alarm() {
     const jobs = await this.state.storage.list({ prefix: "job:" });
     for (const [key, job] of jobs) {
-      // Delete first so that failed jobs are not repeatedly retried by the alarm.
+      // Hapus dulu supaya job yang gagal tidak diulang terus-menerus oleh alarm retry.
       await this.state.storage.delete(key);
       try {
         await processImageInstruction(
@@ -319,7 +390,7 @@ export class ChatSession {
   async fetch(request) {
     const url = new URL(request.url);
 
-    // Dedupe Telegram update_id (Telegram resends if the webhook is slow).
+    // Dedupe update_id Telegram (Telegram mengirim ulang kalau webhook lambat).
     if (url.pathname === "/seen" && request.method === "POST") {
       const { updateId } = await request.json();
       const last = (await this.state.storage.get("lastUpdateId")) || 0;
@@ -332,7 +403,7 @@ export class ChatSession {
       return Response.json({ duplicate: false });
     }
 
-    // Enqueue job; processed in alarm().
+    // Antrikan job; diproses di alarm().
     if (url.pathname === "/job" && request.method === "POST") {
       const job = await request.json();
       await this.state.storage.put(`job:${Date.now()}:${Math.random().toString(36).slice(2)}`, job);
@@ -343,7 +414,7 @@ export class ChatSession {
       return new Response("OK");
     }
 
-    // Mode (image / video) — persistent, not affected by photo TTL.
+    // Mode (image / video) — persisten, tidak kena TTL foto.
     if (url.pathname === "/mode") {
       if (request.method === "PUT") {
         const body = await request.json();
@@ -385,15 +456,15 @@ export class ChatSession {
   }
 }
 
-// Get the Durable Object stub for a specific chat
+// Ambil stub Durable Object untuk chat tertentu
 function getChatSessionStub(env, chatId) {
   if (!env.CHAT_SESSION) return null;
   const id = env.CHAT_SESSION.idFromName(String(chatId));
   return env.CHAT_SESSION.get(id);
 }
 
-// Add one fileId to the list of photos currently being collected for this chat.
-// Returns the latest list of fileIds (after being added, and already trimmed to MAX_IMAGES).
+// Tambahkan satu fileId ke daftar foto yang sedang ditampung untuk chat ini.
+// Mengembalikan daftar fileIds terbaru (setelah ditambahkan, dan sudah dipotong ke MAX_IMAGES).
 async function sessionAddPending(env, chatId, fileId, maxImages) {
   const stub = getChatSessionStub(env, chatId);
   if (!stub) throw new Error("CHAT_SESSION binding is missing");
@@ -435,7 +506,7 @@ async function sessionDeletePending(env, chatId) {
   });
 }
 
-// Get the active mode for this chat: "image" (default, photo edit) or "video" (image-to-video).
+// Ambil mode aktif untuk chat ini: "image" (default, edit foto) atau "video" (image-to-video).
 async function sessionGetMode(env, chatId) {
   const stub = getChatSessionStub(env, chatId);
   if (!stub) return "image";
@@ -450,7 +521,7 @@ async function sessionGetMode(env, chatId) {
   }
 }
 
-// Set the active mode for this chat.
+// Set mode aktif untuk chat ini.
 async function sessionSetMode(env, chatId, mode) {
   const stub = getChatSessionStub(env, chatId);
   if (!stub) throw new Error("CHAT_SESSION binding is missing");
@@ -489,7 +560,7 @@ async function sessionIsDuplicateUpdate(env, chatId, updateId) {
   }
 }
 
-// Get the image file_id from a message (photo or image document)
+// Ambil file_id gambar dari sebuah message (photo atau document bergambar)
 function extractFileId(msg) {
   if (!msg) return null;
   if (Array.isArray(msg.photo) && msg.photo.length > 0) {
@@ -520,7 +591,7 @@ export default {
       });
     }
 
-    // TEMPORARY: debug endpoint. DELETE after testing is done.
+    // SEMENTARA: endpoint debug. HAPUS setelah selesai tes.
     if (request.method === "GET" && url.pathname === "/debug-jerouter") {
       const base = (env.JEROUTER_BASE_URL || "https://je.jerouter.web.id/v1").replace(/\/$/, "");
       const model = env.JEROUTER_MODEL || "qwen3.8-27b-unsencored";
@@ -633,10 +704,10 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "👋 Welcome to Prompt Vision Bot!\n\n" +
-      "🖼️ Default mode: EDIT PHOTO. Send reference photos, then send the edit instructions in Indonesian — I will produce detailed English image-editing prompts.\n\n" +
-      "🎬 VIDEO mode: type /video to switch. Send reference photos + instructions, I will produce per-scene image-to-video prompts (movement, camera, lighting) that keep the character/identity from the photo consistent.\n\n" +
-      "🔒 Main character locked: identity & body lock active based on canonical reference photos (no name — matched purely through facial features and body proportions).\n\n" +
-      "Type /help for full details."
+      "🖼️ Mode default: EDIT FOTO. Kirim foto referensi, lalu kirim instruksi editnya dalam Bahasa Indonesia — aku hasilkan prompt image-editing detail dalam Bahasa Inggris.\n\n" +
+      "🎬 Mode VIDEO: ketik /video untuk beralih. Kirim foto referensi + instruksi, aku hasilkan prompt image-to-video per scene (movement, camera, lighting) yang tetap menjaga karakter/identitas dari foto.\n\n" +
+      "🔒 Karakter utama terkunci: identity & body lock aktif berdasarkan foto referensi kanon (tanpa nama — dicocokkan lewat fitur wajah + proporsi tubuh) — usia 28, rambut dan kuku terkunci kanon.\n\n" +
+      "Ketik /help untuk detail lengkap."
     );
 
     console.log("START_RECEIVED", chatId);
@@ -649,15 +720,15 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "📖 How to use:\n\n" +
-      "🖼️ PHOTO EDIT MODE (default):\n" +
+      "🖼️ MODE EDIT FOTO (default):\n" +
       "1. Send one or more reference photos (one message at a time).\n" +
       "2. Send your instructions in Indonesian.\n" +
       "3. I will analyze all the photos together as one scene and generate one detailed English image-editing prompt.\n\n" +
-      "🎬 VIDEO MODE (image-to-video):\n" +
-      "1. Type /video to enter this mode (once set, it stays active until you change it again).\n" +
-      "2. Send reference photos + instructions (movement, mood, duration/number of scenes if you want to be specific).\n" +
-      "3. I will produce detailed per-scene image-to-video prompts: subject movement, camera movement, lighting, atmosphere — while keeping the face, outfit, and identity from the photo consistent across all scenes.\n" +
-      "4. Type /image to return to photo edit mode.\n\n" +
+      "🎬 MODE VIDEO (image-to-video):\n" +
+      "1. Ketik /video untuk masuk mode ini (sekali diset, tetap aktif sampai kamu ganti lagi).\n" +
+      "2. Kirim foto referensi + instruksi (gerakan, mood, durasi/jumlah scene kalau mau spesifik).\n" +
+      "3. Aku hasilkan prompt image-to-video detail per scene: pergerakan subjek, camera movement, lighting, atmosphere — sambil menjaga wajah, outfit, dan identitas dari foto tetap konsisten di semua scene.\n" +
+      "4. Ketik /image untuk kembali ke mode edit foto.\n\n" +
       "You can also send a photo with the instruction as its caption to process it right away.\n\n" +
       `Maximum ${Number(env.MAX_IMAGES_PER_SCENE || DEFAULT_MAX_IMAGES)} photos per scene. Send /reset to clear photos you've already sent.`
     );
@@ -666,7 +737,7 @@ async function handleTelegramUpdate(update, env) {
     return;
   }
 
-  // /video - switch to image-to-video mode
+  // /video - beralih ke mode image-to-video
   if (typeof message.text === "string" && message.text.startsWith("/video")) {
     try {
       await sessionSetMode(env, chatId, "video");
@@ -677,17 +748,17 @@ async function handleTelegramUpdate(update, env) {
     await telegramSendMessage(
       env,
       chatId,
-      "🎬 VIDEO mode active.\n\n" +
-      "Send reference photos, then write your video instructions (movement, mood, camera movement, duration/number of scenes if you want to be specific — can be in Indonesian).\n\n" +
-      "I will produce detailed per-scene image-to-video prompts (movement, camera, lighting) in English, ready to use in AI image-to-video tools (Kling, Runway, Luma, Pika, etc), while keeping the character/identity from the photo consistent.\n\n" +
-      "Type /image to return to photo edit mode."
+      "🎬 Mode VIDEO aktif.\n\n" +
+      "Kirim foto referensi, lalu tulis instruksi video kamu (gerakan, mood, camera movement, durasi/jumlah scene kalau mau spesifik — boleh dalam Bahasa Indonesia).\n\n" +
+      "Aku akan hasilkan prompt image-to-video detail per scene (movement, camera, lighting) dalam Bahasa Inggris, siap dipakai di tool image-to-video AI (Kling, Runway, Luma, Pika, dll), sambil menjaga karakter/identitas dari foto tetap konsisten.\n\n" +
+      "Ketik /image untuk kembali ke mode edit foto."
     );
 
     console.log("MODE_SET_VIDEO", chatId);
     return;
   }
 
-  // /image - return to photo edit mode
+  // /image - kembali ke mode edit foto
   if (typeof message.text === "string" && message.text.startsWith("/image")) {
     try {
       await sessionSetMode(env, chatId, "image");
@@ -698,7 +769,7 @@ async function handleTelegramUpdate(update, env) {
     await telegramSendMessage(
       env,
       chatId,
-      "🖼️ PHOTO EDIT mode active. Send reference photos, then the changes you want."
+      "🖼️ Mode EDIT FOTO aktif. Kirim foto referensi, lalu instruksi perubahan yang kamu mau."
     );
 
     console.log("MODE_SET_IMAGE", chatId);
@@ -806,9 +877,9 @@ async function handleTelegramUpdate(update, env) {
       length: instruction.length
     });
 
-    // Path 1: user replies to a photo -> process only that photo, no storage needed.
-    // This is an explicit override, so the batch of photos currently being collected
-    // (if any) is cleared so they don't get mixed into the next instruction.
+    // Jalur 1: user me-reply foto -> proses foto itu saja, tidak butuh storage.
+    // Ini adalah override eksplisit, jadi batch foto yang sedang ditampung
+    // (kalau ada) dibersihkan supaya tidak ikut tercampur di instruksi berikutnya.
     const repliedFileId = extractFileId(message.reply_to_message);
     if (repliedFileId) {
       const modeForReply = await sessionGetMode(env, chatId);
@@ -834,8 +905,8 @@ async function handleTelegramUpdate(update, env) {
         await telegramSendMessage(
           env,
           chatId,
-          "📷 Send reference photos first, then write the change instructions.\n\n" +
-          "You can send more than one photo for one scene, or reply to a photo that has been sent with your instructions."
+          "📷 Kirim foto referensi terlebih dahulu, lalu tulis instruksi perubahan.\n\n" +
+          "Kamu bisa kirim lebih dari satu foto untuk satu scene, atau me-reply foto yang sudah dikirim dengan instruksimu."
         );
 
         return;
@@ -889,17 +960,17 @@ async function processImageInstruction(
     const model = env.JEROUTER_MODEL || "step-5-unrestricted";
     const fallback = env.JEROUTER_FALLBACK_MODEL || "";
 
-    // Initial status message
+    // Pesan status awal
     await telegramSendMessage(
       env,
       chatId,
       isVideo
         ? (ids.length > 1
-            ? `🎬 Processing ${ids.length} reference photos...\n\n⏳ Step 1/3 — Downloading photos from Telegram`
-            : "🎬 Processing reference photo...\n\n⏳ Step 1/3 — Downloading photo from Telegram")
+            ? `🎬 Memproses ${ids.length} foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
+            : "🎬 Memproses foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram")
         : (ids.length > 1
-            ? `🔍 Processing ${ids.length} reference photos...\n\n⏳ Step 1/3 — Downloading photos from Telegram`
-            : "🔍 Processing reference photo...\n\n⏳ Step 1/3 — Downloading photo from Telegram")
+            ? `🔍 Memproses ${ids.length} foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
+            : "🔍 Memproses foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram")
     );
 
     console.log("TELEGRAM_FILE_REQUEST", {
@@ -922,11 +993,11 @@ async function processImageInstruction(
       totalBytes: imageDataUrls.reduce((sum, u) => sum + u.length, 0)
     });
 
-    // Status: photos downloaded, now sending to AI
+    // Status: foto sudah diunduh, sekarang kirim ke AI
     await telegramSendMessage(
       env,
       chatId,
-      `✅ Step 1/3 done — ${ids.length} photos downloaded (${totalKB} KB total)\n\n⏳ Step 2/3 — Sending to AI model\n🤖 Model: ${model}${fallback ? ` (backup: ${fallback})` : ""}`
+      `✅ Langkah 1/3 selesai — ${ids.length} foto diunduh (${totalKB} KB total)\n\n⏳ Langkah 2/3 — Mengirim ke model AI\n🤖 Model: ${model}${fallback ? ` (cadangan: ${fallback})` : ""}`
     );
 
     console.log("JEROUTER_REQUEST", {
@@ -947,11 +1018,11 @@ async function processImageInstruction(
       mode
     });
 
-    // Status: AI finished, now sending the result
+    // Status: AI selesai, sekarang kirim hasilnya
     await telegramSendMessage(
       env,
       chatId,
-      `✅ Step 2/3 done — AI finished thinking (${countWords(prompt)} words)\n\n⏳ Step 3/3 — Sending the prompt to you`
+      `✅ Langkah 2/3 selesai — AI selesai berpikir (${countWords(prompt)} kata)\n\n⏳ Langkah 3/3 — Mengirim prompt ke kamu`
     );
 
     await sendLongTelegramMessage(
@@ -1061,8 +1132,8 @@ async function downloadTelegramImage(env, fileId) {
     throw new Error("Image is too large");
   }
 
-  // Do not trust the content-type header from Telegram (it can be "application/octet-stream").
-  // Detect from magic bytes so the data URL is always valid for the vision model.
+  // Jangan percaya header content-type dari Telegram (bisa "application/octet-stream").
+  // Deteksi dari magic bytes supaya data URL selalu valid untuk model vision.
   const contentType = detectImageMime(
     arrayBuffer,
     imageResponse.headers.get("content-type")
@@ -1113,10 +1184,10 @@ function countWords(text) {
   return matches ? matches.length : 0;
 }
 
-// Split the model output into { main, negative }.
-// The model is instructed to always end with the line "Negative prompt: ...".
-// If that line is missing (the model forgets the format), negative is left empty and
-// the entire text is treated as the main prompt so no data is lost.
+// Pisahkan output model jadi { main, negative }.
+// Model diinstruksikan selalu mengakhiri dengan baris "Negative prompt: ...".
+// Kalau baris itu tidak ada (model lupa format), negative dikosongkan dan
+// seluruh teks dianggap main prompt supaya tidak ada data yang hilang.
 function splitPromptAndNegative(text) {
   const raw = String(text || "").trim();
   const match = raw.match(/(^|\n)\s*Negative prompt\s*:\s*/i);
@@ -1137,7 +1208,7 @@ function joinPromptAndNegative(main, negative) {
   return `${main}\n\nNegative prompt: ${negative}`;
 }
 
-// Trim to the maximum word limit, try to stop at the end of a sentence.
+// Potong ke batas kata maksimum, usahakan berhenti di akhir kalimat.
 function trimToMaxWords(text, maxWords) {
   const words = text.trim().split(/\s+/);
   if (words.length <= maxWords) return text.trim();
@@ -1150,7 +1221,7 @@ function trimToMaxWords(text, maxWords) {
     cut.endsWith(".") ? cut.length - 1 : -1
   );
 
-  // Only cut at a sentence boundary if it doesn't throw away too much
+  // Hanya potong di batas kalimat jika tidak membuang terlalu banyak
   if (lastEnd > cut.length * 0.7) {
     return cut.slice(0, lastEnd + 1).trim();
   }
@@ -1158,7 +1229,7 @@ function trimToMaxWords(text, maxWords) {
   return cut.trim();
 }
 
-// Ask the model to produce a prompt of 300-550 words; retry if outside the limits.
+// Minta model menghasilkan prompt 300-550 kata; retry jika di luar batas.
 async function generatePromptWithinLimits(
   env,
   imageDataUrls,
@@ -1191,7 +1262,7 @@ async function generatePromptWithinLimits(
       return joinPromptAndNegative(main, negative);
     }
 
-    // Save the candidate closest to the range as a backup
+    // Simpan kandidat terdekat dengan rentang sebagai cadangan
     const distance = words < minWords ? minWords - words : words - maxWords;
     if (!best || distance < best.distance) {
       best = { main, negative, words, distance };
@@ -1206,15 +1277,15 @@ async function generatePromptWithinLimits(
     };
   }
 
-  // All attempts failed: use the best candidate, trim main if too long
+  // Semua percobaan gagal: pakai kandidat terbaik, potong main jika kelebihan
   const finalMain =
     best.words > maxWords ? trimToMaxWords(best.main, maxWords) : best.main;
 
   return joinPromptAndNegative(finalMain, best.negative);
 }
 
-// Ask the model to produce a per-scene image-to-video prompt ("Scene 1 (0-3s): ...")
-// followed by "Negative prompt:". Retry if the scene/negative format is not met.
+// Minta model menghasilkan prompt image-to-video per scene ("Scene 1 (0-3s): ...")
+// diikuti "Negative prompt:". Retry jika format scene/negative belum terpenuhi.
 async function generateVideoPrompt(env, imageDataUrls, instruction) {
   let feedback = null;
   let lastRawOutput = null;
@@ -1254,8 +1325,8 @@ async function generateVideoPrompt(env, imageDataUrls, instruction) {
     };
   }
 
-  // All attempts failed to meet the strict format: fallback to best-effort split
-  // so the user still gets something usable, not a blank error.
+  // Semua percobaan gagal memenuhi format ketat: fallback ke best-effort split
+  // supaya user tetap dapat sesuatu yang bisa dipakai, bukan error kosong.
   const { main, negative } = splitPromptAndNegative(lastRawOutput);
   return joinPromptAndNegative(main, negative || "");
 }
@@ -1336,14 +1407,14 @@ async function callJerouter(
 
   const requestBody = { model, messages };
 
-  // TEMPERATURE = "" atau "none" -> temperature parameter isn't sent
-  // (some reasoning models reject this parameter).
+  // TEMPERATURE = "" atau "none" -> parameter temperature tidak dikirim
+  // (beberapa model reasoning menolak parameter ini).
   const tempRaw = env.TEMPERATURE === undefined ? "0.35" : String(env.TEMPERATURE).trim();
   if (tempRaw !== "" && tempRaw.toLowerCase() !== "none") {
     requestBody.temperature = Number(tempRaw);
   }
 
-  // MAX_TOKENS (optional, in wrangler.toml [vars]) -> limit output length.
+  // MAX_TOKENS (opsional, di wrangler.toml [vars]) -> batasi panjang output.
   const maxTokensRaw = env.MAX_TOKENS ? Number(env.MAX_TOKENS) : 0;
   if (maxTokensRaw > 0) {
     requestBody.max_tokens = maxTokensRaw;
@@ -1353,7 +1424,7 @@ async function callJerouter(
   const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504, 520, 522, 524]);
   const MAX_HTTP_RETRIES = 1;
 
-  // Model list: main first, then backup (JEROUTER_FALLBACK_MODEL) on timeout/server error.
+  // Daftar model: utama dulu, lalu cadangan (JEROUTER_FALLBACK_MODEL) bila timeout/error server.
   const modelList = [model];
   if (env.JEROUTER_FALLBACK_MODEL && env.JEROUTER_FALLBACK_MODEL !== model) {
     modelList.push(env.JEROUTER_FALLBACK_MODEL);
@@ -1392,7 +1463,7 @@ async function callJerouter(
       await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
     }
 
-    // Success -> done. Server failure/timeout and a backup model still exists -> try the next model.
+    // Sukses -> selesai. Gagal server/timeout dan masih ada model cadangan -> coba model berikutnya.
     if (response && response.ok) break;
     if (m < modelList.length - 1) {
       console.warn("JEROUTER_FALLBACK", { from: modelList[m], to: modelList[m + 1], status: response?.status });
@@ -1405,8 +1476,8 @@ async function callJerouter(
     data = JSON.parse(rawText);
   } catch {
     throw new Error(
-      `Jerouter HTTP ${response.status} (not JSON): ${rawText.slice(0, 200)}. ` +
-      `The AI server is having trouble, try again in a moment.`
+      `Jerouter HTTP ${response.status} (bukan JSON): ${rawText.slice(0, 200)}. ` +
+      `Server AI sedang bermasalah, coba lagi sebentar lagi.`
     );
   }
 
