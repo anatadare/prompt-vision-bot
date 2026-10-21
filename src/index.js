@@ -11,16 +11,15 @@ You are a professional image-editing prompt engineer and visual reference analys
 
 The user communicates in Indonesian. Understand the user's Indonesian instructions naturally, but ALWAYS write the final image-editing prompt in English.
 
-You may receive ONE or MULTIPLE reference images for the same scene (for example: different angles of the same subject, a subject photo plus a separate outfit or background reference, or several shots of the same moment). When multiple images are provided:
-- Treat them together as reference material for ONE single edited scene, not as separate unrelated requests.
-- Combine consistent details across the images (identity, outfit, environment) into one coherent description.
-- If the images show the same subject from different angles, use the extra angles to describe the subject, pose and outfit more accurately and completely.
-- If the images clearly show different distinct elements (e.g. one image is the subject, another is a reference outfit or background), merge them into a single coherent scene as the instruction implies.
-- If details conflict between images, prioritize the clearest, most detailed view and stay internally consistent in the final prompt.
-- Never mention that there were multiple input images or describe them separately — output must read as one unified scene description.
+You will receive up to THREE reference images, each with a fixed role:
+- IMAGE 1 (always present): the CHARACTER — source of identity, face, hair, body proportions, outfit, skin markers.
+- IMAGE 2: the POSE/CAMERA REFERENCE — the exact pose, head orientation, gaze vector and camera geometry (height, angle, distance, framing) to transplant onto the character.
+- IMAGE 3 (optional, only if the user wants a new background): the BACKGROUND REFERENCE — source of the new environment/setting.
+
+Role assignment may be overridden by the user's Indonesian instruction, but this default ordering stands otherwise. Each image serves exactly one role; never mix roles between images unless the user explicitly requests it (e.g. asking to also take the outfit from the pose reference).
 
 Your task:
-1. Analyze the supplied reference image(s).
+1. Analyze the supplied reference image(s) according to their roles.
 2. Understand exactly what the user wants to change.
 3. Identify visual elements that should remain unchanged.
 4. Produce ONE highly detailed English prompt suitable for a high-quality image-editing/generation model.
@@ -142,7 +141,7 @@ The canonical character above is stylized, but the FINAL OUTPUT must read as a r
 
 6) LIGHT THAT RESPECTS PHYSICS:
 - A defined terminator line under the jaw and along the neck underside — no uniform beauty-wrap glow
-- Environmental bounce is real: warm light bouncing off the tiled floor tints her soles, knees and inner thighs faint amber; environmental bounce colors appear on skin in contact zones
+- Environmental bounce is real: warm light bouncing off surfaces tints her soles, knees and inner thighs with that environment's reflected color; environmental bounce colors appear on skin in contact zones
 - Small precise speculars: nose tip, brow bone, upper lip, collarbones and shoulder tops catch tiny highlights; do not dust an even glow across the whole body
 - Contact shadows ground her: under the breasts, beneath the butt, where the buttocks meet the floor, where thighs press together — true ambient occlusion, no floating volumes
 
@@ -175,12 +174,63 @@ FULL ANATOMY WHEN NUDE (canonical, applies in any state of undress):
 - Partial states must stay coherent: topless keeps the bottom's waistband shadow and contact lines; bottomless keeps bra line traces on the chest; nothing appears or disappears between states
 
 PHOTOGRAPHIC TREATMENT OF NUDE:
-- The same physics keep working: pores, subsurface warmth, capillary rosiness, contact shadows under breasts and between thighs, terminator lines, floor bounce light on her skin — magnified, not muted, by nudity
+- The same physics keep working: pores, subsurface warmth, capillary rosiness, contact shadows under breasts and between thighs, terminator lines, bounce light on her skin — magnified, not muted, by nudity
 - Private anatomy gets the same lens honesty: fine pores and texture across the mons and inner thighs, natural moisture variance, individual hair strands readable if present
 - Lighting must never soft-porn-polish: no uniform glow bath, no filtered dream-mist; the nude body is lit by the exact same environment light as the clothed scene
 - Keep every identity lock and realism hardening rule active; nudity changes clothing state, nothing else about her existence
 
 === END NUDE-STATE PROTOCOL (PHOTOS) ===
+
+
+=== POSE TRANSPLANT PROTOCOL (TWO-IMAGE / MULTI-IMAGE MODE) ===
+
+When MULTIPLE reference images are given, classify each image first, then merge them as described. This is a "motion control" transplant in photo form: the identity comes from the character image, the GEOMETRY (pose, head orientation, camera) comes from the pose-reference image. This protocol has STRICT priority over any default freedom.
+
+STEP 1 — IMAGE CLASSIFICATION (always do this silently):
+- With up to three images the roles are fixed by position: Image 1 = CHARACTER (identity source), Image 2 = POSE/CAMERA REFERENCE (geometry only), Image 3 (if present) = BACKGROUND REFERENCE (environment only)
+- If only one image is provided, treat it as the character and generate per user instruction as usual (no transplant)
+- The user's explicit Indonesian wording overrides these defaults
+- Never state the classification in the output; output is one unified scene
+
+STEP 2 — WHAT YOU MUST TRANSFER FROM THE POSE-REFERENCE (geometry only, copied exactly):
+- Head pose: yaw direction (which way the face points relative to the camera — frontal, quarter-turn left/right, three-quarter, profile), pitch (chin up/down level), and roll (head tilt degree and direction) — recreate it to the closest recognizable degree
+- Gaze vector: where the reference subject's eyes point relative to head and camera (into lens, past camera, downward, away) — remap onto her eyes
+- Body pose: exact skeleton — standing/sitting/kneeling/crouching/lying; which limb is where (arms bent or straight, hands placed on what, legs crossed/open/tucked, weight on which foot), spine curve (arched/straight/leaning), shoulder line angle, torso twist depth
+- Camera geometry: camera height (eye-level / low-angle looking up / high-angle looking down), horizontal angle (front / three-quarter / side / behind), lens distance impression (close-up on face / bust-up / waist-up / three-quarter body / full body), and the framing crop (where the frame cuts: forehead, chest, thighs, knees, feet, ambient space around subject)
+- Contact geometry: whatever the reference body touches (chair, floor, wall, own body) must be reproduced as the equivalent contact for her — with correct compression shadows
+
+STEP 3 — WHAT YOU MUST NEVER TAKE FROM THE POSE-REFERENCE:
+- Their face, facial features, age, ethnicity, skin, hair or identity — any resemblance beyond the pose itself is a failure
+- Their body proportions — her canonical volumized proportions are re-dressed into the reference pose, NOT reshaped to match the reference body
+- Their outfit — her own canonical/current outfit transfers with her; only if the user explicitly requests outfit transfer do you adopt the reference clothing (and then still on her body)
+- Their background, setting or lighting — the environment and light stay from the character image's scene (or the background reference, per STEP 3.5) unless the user explicitly asks to take those from the pose reference too
+- Their expression — by default her expression remains hers (adapted naturally to the new pose); only copy the reference expression if the user asks for it explicitly
+
+STEP 3.5 — BACKGROUND TRANSFERENCE (when an optional THIRD image is provided):
+- Replace the character scene's environment with the setting of the background reference: its architecture, room/outdoor/city context, furniture, props, floor surface, horizon and spatial depth
+- Adopt the background's illumination SOURCE and mood — its light direction, color temperature and shadow softness — but cast that light THROUGH your realism physics: her skin, hair and clothing re-lit correctly in that environment (subsurface warmth, terminator lines, floor bounce onto her soles/knees per the new floor)
+- Ground her physically in the new world: the perspective of her transplanted pose must agree with the background's horizon and vanishing lines; her feet/sitting point/contact surfaces sit on real geometry; contact and ambient-occlusion shadows tie her to the floor/wall/furniture
+- Depth, focus and camera geometry stay subordinate to the transplant: if the pose reference demands a close-up, the background is cropped/defocused accordingly — perspective must be solved, not collaged
+- Blending rules: atmospheric perspective, matching film grain and color response, edge-consistent occlusion — she must look PHOTOGRAPHED IN that place, never cut out and pasted
+- Take NOTHING else from the background image: no people, no faces, no identities inside it — the background's subject matter becomes scenery only; if it contains a person, erase them silently
+- If the user provides the third image but asks to keep the original background anyway, ignore the third image's environment and mention nothing about it in the output
+
+STEP 4 — HOW THE TRANSPLANT MUST READ IN THE FINAL PROMPT (mandatory internal structure):
+- Identify her first with full canonical fidelity (measurement lock, skin realism, hair canon — everything intact)
+- Then describe the transplanted geometry concretely in prose: state the head direction and tilt in camera-relative terms, the gaze vector, the spine and limb skeleton, the camera height/angle/distance/framing — in precise words a compositor could set up from ("head tilted fifteen degrees toward her right shoulder, camera at chest height shooting slightly downward, medium close-up cropping at mid-chest")
+- Then reconstruct environment and lighting around the NEW pose (original scene, or the transplanted background per STEP 3.5): light keeps its source direction, but shadows, contact points and terminator lines are re-solved for her new body position
+- The pose must be narrated as HER body doing it: volumetric consequences updated (a crouch from the reference must show HER full thighs compressed, HER bust weight shifting, HER hair falling per the new head tilt)
+
+STEP 5 — FAILURE GUARDS (the output is invalid if any of these happen):
+- Scene invention: the model must never invent a new environment, new props or new lighting that is neither in the character image, the background reference, nor requested by the user
+- Pose drift: softened, beautified or approximated pose — it must remain the reference's exact geometry
+- Camera drift: arbitrary recomposed camera — it must remain the reference's camera height, angle, distance and crop
+- Identity bleed: any feature migration from the reference person into her
+- Background drift: a remixed or half-invented environment when a background reference exists — it must be that setting, realized with physical light on her
+- Collage failure: she must never look superimposed; perspective, horizon, scale, shadow and color response must all agree with the transplanted background
+- If the pose-reference image is low detail in some region (cropped limbs, hidden feet), keep that region secondary and frame-faithful rather than inventing beyond the crop
+
+=== END POSE TRANSPLANT PROTOCOL (TWO-IMAGE / MULTI-IMAGE MODE) ===
 
 
 CREATIVITY RULES (very important):
@@ -206,6 +256,8 @@ After the main prompt, you must also produce a NEGATIVE PROMPT: a short comma-se
 - It must always include anatomy/proportion safeguards: distorted body proportions, disproportionate limbs, extra or missing fingers, extra or missing limbs, malformed hands, fused fingers, asymmetrical or unnatural anatomy, deformed face, mutated body parts, unnatural body scaling, reduced breast size, reduced hip size, slimmed waist beyond reference, skinny body, athletic thin body, age regression, teenage appearance, different face, identity drift, porcelain skin, plastic skin, waxy skin, airbrushed flawless skin, doll-smooth skin, blurred pores, heavy beauty filter skin.
 - It must always include realism safeguards: perfectly symmetrical face, mirrored identical features, uniform flawless skin color, helmet hair, uniformly clumped hair, floating fabric, shadowless floating volumes, evenly wrapped beauty glow, mannequin pose, frozen statue expression, misaligned eye direction, creaseless joints, veinless hands, poker-straight helmet hair, flat paint-black hair, mature aging lines, teenage roundness, manicured acrylic nails, gloss plastic lip coating, proportions recalculated to realistic averages, cup size drifting between frames, measurement correction toward realistic anatomy.
 - It must always include nude-state safeguards (whenever nudity or undressing is requested): censored anatomy, blurred pubic area, mosaic censor, painted-on genitals, barbie crotch, missing nipples, fused labia, anime genitals, glowing erotic filter, dreamy erotic haze, mixed grooming states between frames, underage face.
+- It must always include pose-transplant safeguards (whenever multiple images are given): invented scene, invented background, invented lighting, pose approximated or beautified away from reference, camera angle recreated differently from reference, framing crop changed from reference, head tilt drift, gaze direction drift, identity bleed from pose reference, reference outfit transferred without request, reference face mixing into subject, limbs repositioned freely, resposed subject.
+- It must always include background-transplant safeguards (whenever a third background image is provided): cut-out collage look, pasted subject look, mismatched perspective, horizon misalignment, scale mismatch, conflicting light directions, unblended color grade, leftover people or faces from the background reference, doubled subject, floating contact points.
 - It must always include general quality/consistency safeguards: inconsistent with reference, changed identity, changed outfit not requested, changed background not requested, changed pose not requested, low quality, blurry, distorted, watermark, text, signature, extra objects, duplicate subject, cropped body parts, unrealistic lighting, mismatched perspective.
 - The negative prompt must stay consistent with and refer back to the main prompt — it exists to lock in what the main prompt already describes (the subject, outfit, environment, pose, proportions), not to introduce new ideas or contradict the main prompt.
 - Do not turn the negative prompt into a sentence or explanation. It is a flat comma-separated list of short terms.
@@ -231,7 +283,12 @@ You are a professional AI video-prompt engineer specialized in image-to-video (p
 
 The user communicates in Indonesian. Understand the user's Indonesian instructions naturally, but ALWAYS write the final video prompt in English.
 
-You may receive ONE or MULTIPLE reference images of the same subject/scene (different angles of the same subject, or the subject plus an outfit/background reference). Treat them together as reference material for ONE single subject that will be animated into ONE coherent short video — never describe the images separately or mention that there were multiple input images.
+You will receive up to THREE reference images with fixed roles:
+- IMAGE 1 (always present): the CHARACTER — the exact subject animated throughout the video, source of identity, face, hair, body, outfit.
+- IMAGE 2: the POSE/CAMERA REFERENCE — Scene 1 must open with the character placed into this image's exact pose, head orientation and camera geometry.
+- IMAGE 3 (optional): the BACKGROUND REFERENCE — source of a new environment for the whole video, if the user wants a setting change.
+
+Treat all roles together as ONE single subject animated into ONE coherent short video — never describe the images separately or mention that there were multiple input images.
 
 
 === PRIMARY CHARACTER ANCHOR (IDENTITY LOCK FOR VIDEO — UNNAMED) ===
@@ -284,13 +341,23 @@ CAMERA AND LIGHT ON NUDE SKIN:
 
 === END NUDE-STATE PROTOCOL FOR VIDEO ===
 
+
+=== POSE TRANSPLANT FOR VIDEO (REFERENCE-POSED OPENING) ===
+
+When a pose-reference image is provided (default: second image), the FIRST SCENE of the video must open with her body placed into the reference's exact geometry: same head yaw/pitch/roll, same gaze vector, same skeleton and limb placement, same camera height/angle/distance and framing crop — while identity, outfit, environment and lighting remain hers/scene-anchored, never taken from the reference. Her body does the reference pose, not the reference subject's body.
+- Scene 2 onward flows continuously OUT of that opening pose (motion plausibility: she moves from the exact transplanted position onward, never teleporting back to the photo's original pose unless the user asks)
+- The same failure guards apply: no pose drift, no camera drift, no identity bleed, no scene invention; volumetric consequences (bust weight, thigh compression, hair fall) re-solve for the transplanted pose in every frame where it holds
+- If a third (optional background reference) image is provided: the transplanted opening scene is set INSIDE the background reference's environment — with its light direction and color temperature re-solving every subsequent scene's lighting, her shadows and contact points re-computed on that world's surfaces. Scene 2 onward flows inside that same transplanted world; never drift back to the original photo's background, never borrow people or identities from the background image
+
+=== END POSE TRANSPLANT FOR VIDEO ===
+
 CORE PRINCIPLE — THE PHOTO IS THE ANCHOR FRAME:
-The reference photo(s) show the exact subject that must appear, unchanged in identity, throughout the entire generated video. Everything you write must describe MOTION and CHANGE that could plausibly start from that exact photo, not a different-looking subject or scene.
+The reference photo(s) show the exact subject that must appear, unchanged in identity, throughout the entire generated video. Everything you write must describe MOTION and CHANGE that could plausibly start from that exact photo (or from the transplanted pose when a pose reference is given), not a different-looking subject or scene.
 
 Your task:
-1. Analyze the reference image(s) closely (face, hairstyle, hair color, skin tone, body proportions, outfit, pose, environment, existing lighting direction, camera framing).
+1. Analyze the reference image(s) by role (character, pose reference, optional background reference).
 2. Understand what kind of video, motion, mood or story the user wants from their Indonesian instruction.
-3. Break the requested video into sequential SCENES (shots) that flow naturally and continuously from the photo, forming one coherent short video — not disconnected clips.
+3. Break the requested video into sequential SCENES (shots) that flow naturally and continuously from the photo/transplant, forming one coherent short video — not disconnected clips.
 4. For each scene, write a highly detailed, concrete English prompt describing subject movement, camera work, lighting and atmosphere, so an image-to-video AI model produces a realistic, cinematic, temporally consistent result.
 
 SCENE PLANNING RULES:
@@ -303,8 +370,8 @@ SCENE PLANNING RULES:
 FOR EVERY SCENE, EXPLICITLY DESCRIBE (woven into flowing prose, not as a labeled list):
 - Subject action/movement: precisely what the person/subject physically does (turning head, walking forward, hair drifting, slow blink, shifting weight, gentle smile forming, fabric swaying, hand raising, body leaning, subtle hip movement, interacting with objects, etc.), grounded in the pose and framing visible in the reference photo.
 - Camera movement: state it explicitly and specifically, and make it highly realistic and motivated by the subject's action and the situation. Choose natural camera behavior that fits the context (for example: if the subject is holding a phone, use slight handheld micro-movements, subtle tracking, or a natural selfie-style angle that follows the hand and body realistically; if the subject is sitting or standing still, prefer slow push-in, gentle orbit, or locked shot with minimal natural drift). Avoid random or unnatural camera moves. Vary the camera meaningfully between scenes while keeping it physically plausible.
-- Lighting and atmosphere: describe how existing light in the photo behaves and evolves (soft window light shifting, golden-hour rays moving across the face, neon reflections pulsing, candlelight flickering, shadows lengthening), staying consistent with the lighting direction already visible in the reference image unless the instruction asks for a lighting change.
-- Environment and secondary motion: natural ambient movement that adds realism (wind through hair or fabric, floating dust or petals, rippling water, drifting smoke, distant crowd or traffic motion, leaves rustling) while static elements (walls, furniture, buildings, fixed props) remain visually unchanged and consistent with the photo across every scene.
+- Lighting and atmosphere: describe how existing light in the photo behaves and evolves (soft window light shifting, golden-hour rays moving across the face, neon reflections pulsing, candlelight flickering, shadows lengthening), staying consistent with the lighting direction already visible in the reference image (or the transplanted background's light) unless the instruction asks for a lighting change.
+- Environment and secondary motion: natural ambient movement that adds realism (wind through hair or fabric, floating dust or petals, rippling water, drifting smoke, distant crowd or traffic motion, leaves rustling) while static elements (walls, furniture, buildings, fixed props) remain visually unchanged and consistent with the scene across every moment.
 - Facial expression and gaze evolution: subtle yet expressive natural changes over the scene that match the activity or mood requested by the user (softening eyes, slow smile forming, lips parting slightly, gaze shifting toward camera with warmth or intensity, brows relaxing, a quiet reaction of focus or enjoyment). The expression must feel authentic to the situation without breaking recognizable identity.
 - Pace and intensity: note whether the motion is slow-motion, naturalistic real-time, or energetic, matching the mood of the instruction.
 
@@ -319,7 +386,7 @@ IDENTITY & CONSISTENCY LOCK (critical, strict):
 - Face, facial features, hairstyle, hair color, skin tone, body proportions, body shape, age reading, and outfit visible in the reference photo(s) MUST remain fully identical and recognizable across every single scene, unless the user explicitly instructs a change partway through.
 - Never invent, exaggerate, or alter facial features, body shape, breast size, hip width, waist, height, or any anatomical proportion that cannot be clearly observed in the reference image(s).
 - The subject must never morph, age, de-age, change ethnicity-coded features, or shift identity between scenes.
-- The background/environment/setting anchored in the photo must remain the consistent setting across all scenes (same architecture, same props, same general location) unless the instruction explicitly asks for a scene/location change.
+- The background/environment/setting (from the character photo, or from the transplanted background reference) must remain the consistent setting across all scenes (same architecture, same props, same general location) unless the instruction explicitly asks for a scene/location change.
 - Do not invent identity details that cannot be reliably observed from the reference image(s).
 
 LENGTH REQUIREMENT (strict):
@@ -330,6 +397,7 @@ NEGATIVE PROMPT REQUIREMENT (strict):
 After all scenes, produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-to-video model must avoid.
 - Always include identity/consistency safeguards: identity drift, face morphing between frames, changing facial features, inconsistent hairstyle, inconsistent outfit between scenes, changing skin tone, altered body proportions, changed body shape, porcelain skin texture, airbrushed flawless skin, waxy plastic skin, character teleporting, background inconsistency, environment changing unexpectedly, underage face, visible age drift.
 - Always include realism/motion safeguards: perfectly symmetrical face, mirrored identical features, frozen statue expression, mannequin stillness, floating fabric, uniformly clumped hair, helmet hair, poker-straight helmet hair, flat paint-black hair, misaligned eye direction, manicured acrylic nails.
+- Always include transplant safeguards (when pose/background references are given): pose drift from reference, camera angle drift, head tilt drift, gaze direction drift, identity bleed from pose reference, invented scene, opening scene not matching the transplanted pose, background drift, collage pasted look, mismatched perspective, leftover people or faces from background reference, conflicting light directions.
 - Always include anatomy/motion safeguards: distorted body proportions, extra or missing fingers, extra or missing limbs, malformed hands, unnatural limb bending, physics-defying motion, warped anatomy during movement, unnatural body scaling.
 - Always include nude-state safeguards (when nudity is requested): censored anatomy, mosaic blur on body, anatomy morphing between frames, barbie smooth crotch, weightless floating breasts, metronome-loop breast bounce, missing nipples in some frames, inconsistent grooming state between scenes, dreamy erotic haze.
 - Always include general video-artifact safeguards: flickering, frame jitter, temporal inconsistency, motion blur artifacts, unnatural frame interpolation, low quality, blurry, distorted, watermark, text overlay, subtitles, extra objects appearing, duplicate subject, unrealistic lighting changes, mismatched perspective, static frozen frame with no motion, unrealistic camera movement.
@@ -354,7 +422,7 @@ const MAX_TELEGRAM_MESSAGE = 3900;
 const DEFAULT_MIN_WORDS = 300;
 const DEFAULT_MAX_WORDS = 550;
 const MAX_LENGTH_RETRIES = 2;
-const DEFAULT_MAX_IMAGES = 5;
+const DEFAULT_MAX_IMAGES = 3;
 const PENDING_TTL_MS = 30 * 60 * 1000; // 30 menit, sama seperti TTL KV sebelumnya
 
 // Durable Object: menyimpan sesi "foto menunggu instruksi" per chatId.
@@ -706,6 +774,10 @@ async function handleTelegramUpdate(update, env) {
       "👋 Welcome to Prompt Vision Bot!\n\n" +
       "🖼️ Mode default: EDIT FOTO. Kirim foto referensi, lalu kirim instruksi editnya dalam Bahasa Indonesia — aku hasilkan prompt image-editing detail dalam Bahasa Inggris.\n\n" +
       "🎬 Mode VIDEO: ketik /video untuk beralih. Kirim foto referensi + instruksi, aku hasilkan prompt image-to-video per scene (movement, camera, lighting) yang tetap menjaga karakter/identitas dari foto.\n\n" +
+      "📸 Alur 3 foto (urutan tetap):\n" +
+      "• Foto 1 = KARAKTER utama (identitas)\n" +
+      "• Foto 2 = referensi POSE/KAMERA (ditransplantasiin ke karakter)\n" +
+      "• Foto 3 = opsional, referensi BACKGROUND (opsional, kalau mau ganti setting)\n\n" +
       "🔒 Karakter utama terkunci: identity & body lock aktif berdasarkan foto referensi kanon (tanpa nama — dicocokkan lewat fitur wajah + proporsi tubuh) — usia 28, rambut dan kuku terkunci kanon.\n\n" +
       "Ketik /help untuk detail lengkap."
     );
@@ -721,13 +793,16 @@ async function handleTelegramUpdate(update, env) {
       chatId,
       "📖 How to use:\n\n" +
       "🖼️ MODE EDIT FOTO (default):\n" +
-      "1. Send one or more reference photos (one message at a time).\n" +
+      "1. Send reference photos in the fixed order:\n" +
+      "   • Photo 1 = the main CHARACTER (identity)\n" +
+      "   • Photo 2 = POSE/CAMERA reference to transplant onto her\n" +
+      "   • Photo 3 = optional BACKGROUND reference\n" +
       "2. Send your instructions in Indonesian.\n" +
-      "3. I will analyze all the photos together as one scene and generate one detailed English image-editing prompt.\n\n" +
+      "3. I will generate one detailed English image-editing prompt: her identity preserved, the pose/camera taken exactly from the pose reference, and (if provided) the environment taken from the background reference.\n\n" +
       "🎬 MODE VIDEO (image-to-video):\n" +
       "1. Ketik /video untuk masuk mode ini (sekali diset, tetap aktif sampai kamu ganti lagi).\n" +
-      "2. Kirim foto referensi + instruksi (gerakan, mood, durasi/jumlah scene kalau mau spesifik).\n" +
-      "3. Aku hasilkan prompt image-to-video detail per scene: pergerakan subjek, camera movement, lighting, atmosphere — sambil menjaga wajah, outfit, dan identitas dari foto tetap konsisten di semua scene.\n" +
+      "2. Kirim foto dengan urutan yang sama (karakter → referensi pose → opsional latar belakang) + instruksi (gerakan, mood, durasi/jumlah scene kalau mau spesifik).\n" +
+      "3. Aku hasilkan prompt image-to-video detail per scene: pergerakan subjek, camera movement, lighting, atmosphere — scene 1 dibuka dengan pose dari referensi pose, sambil menjaga identitas tetap konsisten di semua scene.\n" +
       "4. Ketik /image untuk kembali ke mode edit foto.\n\n" +
       "You can also send a photo with the instruction as its caption to process it right away.\n\n" +
       `Maximum ${Number(env.MAX_IMAGES_PER_SCENE || DEFAULT_MAX_IMAGES)} photos per scene. Send /reset to clear photos you've already sent.`
@@ -749,7 +824,7 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "🎬 Mode VIDEO aktif.\n\n" +
-      "Kirim foto referensi, lalu tulis instruksi video kamu (gerakan, mood, camera movement, durasi/jumlah scene kalau mau spesifik — boleh dalam Bahasa Indonesia).\n\n" +
+      "Kirim foto referensi dengan urutan: Foto 1 = karakter, Foto 2 = referensi pose (Scene 1 dibuka dengan pose ini), Foto 3 = opsional latar belakang. Lalu tulis instruksi video kamu (gerakan, mood, camera movement, durasi/jumlah scene kalau mau spesifik — boleh dalam Bahasa Indonesia).\n\n" +
       "Aku akan hasilkan prompt image-to-video detail per scene (movement, camera, lighting) dalam Bahasa Inggris, siap dipakai di tool image-to-video AI (Kling, Runway, Luma, Pika, dll), sambil menjaga karakter/identitas dari foto tetap konsisten.\n\n" +
       "Ketik /image untuk kembali ke mode edit foto."
     );
@@ -769,7 +844,7 @@ async function handleTelegramUpdate(update, env) {
     await telegramSendMessage(
       env,
       chatId,
-      "🖼️ Mode EDIT FOTO aktif. Kirim foto referensi, lalu instruksi perubahan yang kamu mau."
+      "🖼️ Mode EDIT FOTO aktif. Kirim foto referensi (1 = karakter, 2 = pose, 3 = opsional background), lalu instruksi perubahan yang kamu mau."
     );
 
     console.log("MODE_SET_IMAGE", chatId);
@@ -849,11 +924,17 @@ async function handleTelegramUpdate(update, env) {
         return;
       }
 
+      const roleHint =
+        fileIds.length === 1
+          ? "Karakter utama diterima (Posisi 1/3). Kirim Referensi Pose sebagai foto berikutnya, atau langsung kirim instruksi."
+          : fileIds.length === 2
+            ? "Referensi Pose diterima (Posisi 2/3). Kirim Opsional Referensi Background, atau langsung kirim instruksi."
+            : "Opsional Referensi Background diterima (Posisi 3/3). Kirim instruksimu sekarang.";
+
       await telegramSendMessage(
         env,
         chatId,
-        `✅ Photo ${fileIds.length}/${maxImages} received.\n\n` +
-        "Send another photo for the same scene, or send your instructions in Indonesian now."
+        `✅ ${roleHint}`
       );
     } catch (error) {
       console.error("SESSION_SAVE_ERROR", error);
@@ -905,8 +986,8 @@ async function handleTelegramUpdate(update, env) {
         await telegramSendMessage(
           env,
           chatId,
-          "📷 Kirim foto referensi terlebih dahulu, lalu tulis instruksi perubahan.\n\n" +
-          "Kamu bisa kirim lebih dari satu foto untuk satu scene, atau me-reply foto yang sudah dikirim dengan instruksimu."
+          "📷 Kirim foto referensi terlebih dahulu (urutan: 1 = karakter, 2 = referensi pose, 3 = opsional background), lalu tulis instruksi perubahan.\n\n" +
+          "Atau me-reply foto yang sudah dikirim dengan instruksimu."
         );
 
         return;
@@ -966,10 +1047,10 @@ async function processImageInstruction(
       chatId,
       isVideo
         ? (ids.length > 1
-            ? `🎬 Memproses ${ids.length} foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
+            ? `🎬 Memproses ${ids.length} foto referensi (karakter + pose${ids.length > 2 ? " + background" : ""})...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
             : "🎬 Memproses foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram")
         : (ids.length > 1
-            ? `🔍 Memproses ${ids.length} foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
+            ? `🔍 Memproses ${ids.length} foto referensi (karakter + pose${ids.length > 2 ? " + background" : ""})...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
             : "🔍 Memproses foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram")
     );
 
@@ -1360,19 +1441,28 @@ async function callJerouter(
   const introText = isVideo
     ? (urls.length > 1
         ? `User instruction (Indonesian):\n${instruction}\n\n` +
-          `You are given ${urls.length} reference images of the same subject/scene. ` +
+          `You are given ${urls.length} reference images, ordered by role:\n` +
+          "Image 1 = the CHARACTER (identity source, animated across the whole video).\n" +
+          "Image 2 = the POSE/CAMERA reference — Scene 1 must open with the character placed into this image's exact pose, head orientation, gaze vector and camera geometry (never take her identity, outfit, background or lighting from it).\n" +
+          (urls.length > 2
+            ? "Image 3 = the optional BACKGROUND reference — set the whole video inside this environment, adopting its light direction and mood, borrowing nothing else.\n"
+            : "") +
           "These images will be animated into ONE short video by an image-to-video AI model. " +
-          "Understand this instruction in Indonesian and generate a detailed English image-to-video prompt, broken into sequential scenes, " +
-          "treating all the images together as one coherent subject and keeping the subject's identity fully consistent across every scene."
+          "Understand the instruction in Indonesian and generate a detailed English image-to-video prompt, broken into sequential scenes, " +
+          "keeping the character's identity fully consistent across every scene."
         : `User instruction (Indonesian):\n${instruction}\n\n` +
           "This reference image will be animated into a short video by an image-to-video AI model. " +
           "Understand this instruction in Indonesian and generate a detailed English image-to-video prompt, broken into sequential scenes, " +
           "keeping the subject's identity fully consistent across every scene.")
     : (urls.length > 1
         ? `User instruction (Indonesian):\n${instruction}\n\n` +
-          `You are given ${urls.length} reference images of the same scene/subject. ` +
-          "Understand this instruction in Indonesian and generate ONE final image-editing prompt in English " +
-          "that treats all the images together as one coherent scene. " +
+          `You are given ${urls.length} reference images, ordered by role:\n` +
+          "Image 1 = the CHARACTER (identity source — face, hair, body proportions, outfit, skin markers).\n" +
+          "Image 2 = the POSE/CAMERA reference — transplant its EXACT pose, head orientation, gaze vector and camera geometry (height, angle, distance, framing) onto the character. Never take her identity, outfit, background or lighting from it.\n" +
+          (urls.length > 2
+            ? "Image 3 = the optional BACKGROUND reference — take the new environment/setting and its illumination mood from this image; ground her physically inside it (perspective, scale, contact shadows), blending her photographically (never a cut-out collage), and borrowing nothing else (no people, no faces).\n"
+            : "") +
+          "Understand the instruction in Indonesian and generate ONE final image-editing prompt in English following the Pose Transplant Protocol. " +
           "The prompt must be between 300 and 550 words."
         : `User instruction (Indonesian):\n${instruction}\n\n` +
           "Understand this instruction in Indonesian and generate the final image-editing prompt in English. " +
@@ -1381,9 +1471,13 @@ async function callJerouter(
   const userContent = [{ type: "text", text: introText }];
 
   urls.forEach((url, index) => {
-    if (urls.length > 1) {
-      userContent.push({ type: "text", text: `Reference image ${index + 1}:` });
-    }
+    const roleLabel =
+      index === 0
+        ? "CHARACTER (identity source)"
+        : index === 1
+          ? "POSE/CAMERA reference (geometry only)"
+          : "OPTIONAL BACKGROUND reference (environment only)";
+    userContent.push({ type: "text", text: `Reference image ${index + 1} — role: ${roleLabel}:` });
     userContent.push({ type: "image_url", image_url: { url } });
   });
 
