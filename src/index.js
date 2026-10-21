@@ -42,35 +42,48 @@ Pay close attention to:
 - facial expression and gaze
 - realism and anatomical coherence
 
-=== KNOWN CHARACTERS (CRITICAL IDENTITY LOCK) ===
+=== PRIMARY CHARACTER ANCHOR (IDENTITY LOCK — UNNAMED) ===
 
-When the reference image matches or the user mentions one of the following characters, you MUST lock the identity, face, body proportions, and overall appearance exactly as defined below. Do not beautify, slim down, or alter body volume.
+No character name is used for this lock. Match purely by phenotype: when the reference image shows a subject whose face and body match the canonical description below (or when multiple shots show the same such subject), you MUST lock her identity, face, body proportions and overall appearance EXACTLY as defined here. These details were measured from the canonical reference photos. Do not beautify, slim down, or alter body volume.
 
-CHARACTER: Lavanya Asmara
-- Age: 28 years old (adult woman)
-- Height: 179 cm (tall)
-- Ethnicity: Mixed Indonesian-Japanese (Asian)
-- Body type: Curvy balanced hourglass
-- Bust: Very full / large, round and heavy natural appearance (exactly matching the reference photo volume)
-- Hips & Butt: Matched in volume to the bust — balanced, not bottom-heavy or top-heavy
-- Waist: Naturally small relative to bust and hips
-- Overall silhouette: Tall, long-legged, soft feminine curves, healthy full figure
-- Face: Soft oval face, gentle jawline
-- Skin: Fair, smooth, slightly pale Asian skin with natural healthy texture
-- Eyes: Dark brown, slightly almond-shaped, full eyelids
-- Eyebrows: Naturally thick and softly arched
-- Nose: Small, refined, softly rounded tip
-- Lips: Full, naturally plump, soft pink
-- Hair: Jet black, straight, long (past shoulders)
+FACE (canonical):
+- Soft heart-oval face, widest at the cheekbones, tapering smoothly downward
+- Small, compact, doll-like face relative to her shoulders and body
+- Chin: small, softly tapered and rounded — never a sharp point
+- Jawline: soft, no hard angles
+- Eyes: large and round, dark warm brown (nearly black at the pupil), naturally heavy-lidded, drowsy sultry gaze
+- Eye makeup: soft warm brown/taupe smoky eyeshadow, liner tracing the lash line, long lashes lifted at the outer corners
+- Eyebrows: dark, well-groomed, soft-straight with a slightly lifted tail — a low sensual arch, never high or dramatic
+- Nose: slim with a straight, high bridge; small rounded button-like tip; small nostrils
+- Lips: full and pouty; the lower lip noticeably fuller than the upper (roughly 60:40); the cupid's bow defined but rounded; mauve-rosy nude shade with a soft glossy sheen; usually slightly parted and relaxed
+- Skin: fair warm-ivory with a golden undertone — realistically human, NEVER porcelain-doll smooth. True macro-level skin realism: fine visible pores across the nose tip and inner cheeks, soft subsurface warmth at the ears, fingertips and around the eyes, faint natural redness at the nose tip, cheeks and knees, micro-texture catching light unevenly across the face, tiny peach fuzz catching backlight along the jawline, soft dewy sheen only on the T-zone — smooth, but unmistakably living human skin
+- Baseline expression: head slightly tilted, direct half-lidded gaze into the lens — confident, slow, sultry doll-like energy
 
-When generating or editing Lavanya Asmara:
-- Never reduce bust or hip volume.
-- Never make her look slim, skinny, or athletic if the reference shows curvy.
-- Never change her height impression or leg length.
-- Keep the exact facial structure from the reference.
-- Maintain the fair skin tone and black straight hair unless the user explicitly requests a change.
+BODY (canonical):
+- Petite, small-boned frame, ~155-160 cm height impression; small head in proportion
+- Extreme stylized hourglass: small upper body, heavy center and lower body
+- Shoulders: narrow, slim, sloping softly; shoulder-to-hip ratio roughly 3:4
+- Arms: slim and softly rounded, no muscle definition; small wrists, slender graceful fingers
+- Bust: very large, full and heavy — the most exaggerated feature of her figure; strong forward projection; bust line sits relatively low on her torso due to size; tops stretch tight across her chest
+- Waist: extremely small — roughly HALF the width of her hips, with a deep inward curve
+- Hips: wide, the widest point of her body
+- Butt: full, round, prominently projecting; stays compact and rounded even in a crouch
+- Thighs: very thick and full; inner thighs touch; soft muscle under a soft layer — toned but never shredded
+- Thigh slightly longer than the calf — model-like lower-body silhouette
+- Calves: round and full, tapering into slim ankles
+- Feet: small, clean, proportional to her petite frame
+- Skin markers: small moles and light freckles scattered across her back, arms and thighs; skin texture stays realistic at any framing — at close-up distance this means visible fine pores, subtle uneven tone variation, faint compression lines at joint creases; never airbrushed, never doll-smooth
 
-=== END KNOWN CHARACTERS ===
+IDENTITY LOCK RULES:
+- Never reduce bust or hip volume. Never slim her waist beyond its canonical half-of-hip width.
+- Never make her slim, skinny, tall, athletic, or older/younger than the canonical look.
+- Never change her petite height impression, leg proportions, or small rounded chin.
+- Keep the exact facial structure, lip ratio, eye shape and heavy-lidded gaze style from the reference.
+- Keep her fair warm-ivory skin WITH all its realistic human texture — fine visible pores, natural micro-redness, subtle tone unevenness, soft dewy T-zone sheen — plus the scattered small moles/freckles, and jet-black straight long hair falling past her chest unless the user explicitly requests a change.
+- In close-up or macro shots, always render true photographic skin: visible pores, subsurface scattering, individual tiny imperfections. Never render her skin as porcelain, plastic, waxy, airbrushed-smooth, or doll-like.
+- If lighting makes her skin look slightly different between shots, treat the clearest, fairest view as canonical and stay internally consistent everywhere else.
+
+=== END PRIMARY CHARACTER ANCHOR ===
 
 
 CREATIVITY RULES (very important):
@@ -93,7 +106,7 @@ LENGTH REQUIREMENT (strict, applies to the MAIN PROMPT only):
 
 NEGATIVE PROMPT REQUIREMENT (strict):
 After the main prompt, you must also produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-generation model must avoid, so the output does not drift away from what the main prompt describes.
-- It must always include anatomy/proportion safeguards: distorted body proportions, disproportionate limbs, extra or missing fingers, extra or missing limbs, malformed hands, fused fingers, asymmetrical or unnatural anatomy, deformed face, mutated body parts, unnatural body scaling, reduced breast size, reduced hip size, slimmed waist beyond reference, skinny body, athletic thin body, age regression, teenage appearance, different face, identity drift.
+- It must always include anatomy/proportion safeguards: distorted body proportions, disproportionate limbs, extra or missing fingers, extra or missing limbs, malformed hands, fused fingers, asymmetrical or unnatural anatomy, deformed face, mutated body parts, unnatural body scaling, reduced breast size, reduced hip size, slimmed waist beyond reference, skinny body, athletic thin body, age regression, teenage appearance, different face, identity drift, porcelain skin, plastic skin, waxy skin, airbrushed flawless skin, doll-smooth skin, blurred pores, heavy beauty filter skin.
 - It must always include general quality/consistency safeguards: inconsistent with reference, changed identity, changed outfit not requested, changed background not requested, changed pose not requested, low quality, blurry, distorted, watermark, text, signature, extra objects, duplicate subject, cropped body parts, unrealistic lighting, mismatched perspective.
 - The negative prompt must stay consistent with and refer back to the main prompt — it exists to lock in what the main prompt already describes (the subject, outfit, environment, pose, proportions), not to introduce new ideas or contradict the main prompt.
 - Do not turn the negative prompt into a sentence or explanation. It is a flat comma-separated list of short terms.
@@ -122,15 +135,16 @@ The user communicates in Indonesian. Understand the user's Indonesian instructio
 You may receive ONE or MULTIPLE reference images of the same subject/scene (different angles of the same subject, or the subject plus an outfit/background reference). Treat them together as reference material for ONE single subject that will be animated into ONE coherent short video — never describe the images separately or mention that there were multiple input images.
 
 
-=== KNOWN CHARACTERS (CRITICAL IDENTITY LOCK FOR VIDEO) ===
+=== PRIMARY CHARACTER ANCHOR (IDENTITY LOCK FOR VIDEO — UNNAMED) ===
 
-CHARACTER: Lavanya Asmara
-- Age: 28, Height: 179 cm, Mixed Indonesian-Japanese
-- Body: Curvy balanced hourglass — very full large bust matched with equal volume hips/butt, small natural waist, tall long-legged silhouette
-- Face: Soft oval, fair slightly pale skin, dark brown almond eyes, full lips, jet black straight long hair
-- NEVER change body volume, face, or height impression across any scene. Keep exact proportions from the reference photo in every frame.
+No character name is used. Match purely by phenotype against the canonical description:
+- Body: petite small-boned extreme hourglass (~155-160 cm) — narrow slim shoulders, very large heavy full bust with relatively low bust line, extremely small waist (~half her hip width), wide hips, full round projecting butt, thick full thighs that touch, round calves, slim ankles; small moles and light freckles scattered on back, arms and thighs
+- Face: soft heart-oval doll face — small softly-rounded chin, soft jaw, large dark warm-brown heavy-lidded sultry eyes, soft-straight brows with a low arch, slim straight nose with a small rounded tip, full pouty lips (lower fuller than upper, mauve-rosy, slightly parted)
+- Skin: fair warm-ivory with golden undertone and fully realistic human texture — fine visible pores on the nose and inner cheeks, subsurface warmth at the ears and fingertips, faint natural redness on the nose tip and cheeks, soft dewy sheen only on the T-zone, peach fuzz catching light along the jaw; never porcelain-doll or airbrushed-smooth, even in close-up frames
+- Hair: jet-black, straight, long, falling past her chest
+- NEVER change her body volume, face, height impression, skin markers, or hair across any scene. Keep the exact proportions from the reference photo in every frame. If shots differ in lighting or makeup, lock the clearest fairest view as canonical and stay consistent everywhere.
 
-=== END KNOWN CHARACTERS ===
+=== END PRIMARY CHARACTER ANCHOR ===
 
 CORE PRINCIPLE — THE PHOTO IS THE ANCHOR FRAME:
 The reference photo(s) show the exact subject that must appear, unchanged in identity, throughout the entire generated video. Everything you write must describe MOTION and CHANGE that could plausibly start from that exact photo, not a different-looking subject or scene.
@@ -176,7 +190,7 @@ LENGTH REQUIREMENT (strict):
 
 NEGATIVE PROMPT REQUIREMENT (strict):
 After all scenes, produce a NEGATIVE PROMPT: a short comma-separated list (not full sentences) of things the image-to-video model must avoid.
-- Always include identity/consistency safeguards: identity drift, face morphing between frames, changing facial features, inconsistent hairstyle, inconsistent outfit between scenes, changing skin tone, altered body proportions, changed body shape, character teleporting, background inconsistency, environment changing unexpectedly.
+- Always include identity/consistency safeguards: identity drift, face morphing between frames, changing facial features, inconsistent hairstyle, inconsistent outfit between scenes, changing skin tone, altered body proportions, changed body shape, porcelain skin texture, airbrushed flawless skin, waxy plastic skin, character teleporting, background inconsistency, environment changing unexpectedly.
 - Always include anatomy/motion safeguards: distorted body proportions, extra or missing fingers, extra or missing limbs, malformed hands, unnatural limb bending, physics-defying motion, warped anatomy during movement, unnatural body scaling.
 - Always include general video-artifact safeguards: flickering, frame jitter, temporal inconsistency, motion blur artifacts, unnatural frame interpolation, low quality, blurry, distorted, watermark, text overlay, subtitles, extra objects appearing, duplicate subject, unrealistic lighting changes, mismatched perspective, static frozen frame with no motion, unrealistic camera movement.
 - Keep it a flat comma-separated list, typically 25 to 60 words, not a sentence or explanation.
@@ -201,23 +215,23 @@ const DEFAULT_MIN_WORDS = 250;
 const DEFAULT_MAX_WORDS = 500;
 const MAX_LENGTH_RETRIES = 2;
 const DEFAULT_MAX_IMAGES = 5;
-const PENDING_TTL_MS = 30 * 60 * 1000; // 30 menit, sama seperti TTL KV sebelumnya
+const PENDING_TTL_MS = 30 * 60 * 1000; // 30 minutes, same as previous KV TTL
 
-// Durable Object: menyimpan sesi "foto menunggu instruksi" per chatId.
-// Satu instance DO per chatId menangani semua request secara sekuensial,
-// jadi baca-setelah-tulis selalu konsisten (tidak ada lagi race/propagation
-// delay seperti pada Cloudflare KV).
+// Durable Object: stores the "photo awaiting instruction" session per chatId.
+// One DO instance per chatId handles all requests sequentially,
+// so read-after-write is always consistent (no more race/propagation
+// delays like in Cloudflare KV).
 export class ChatSession {
   constructor(state, env) {
     this.state = state;
     this.env = env;
   }
 
-  // Dijalankan oleh alarm (bisa sampai beberapa menit), bukan oleh webhook Telegram.
+  // Executed by alarm (can be up to a few minutes), not by the Telegram webhook.
   async alarm() {
     const jobs = await this.state.storage.list({ prefix: "job:" });
     for (const [key, job] of jobs) {
-      // Hapus dulu supaya job yang gagal tidak diulang terus-menerus oleh alarm retry.
+      // Delete first so that failed jobs are not repeatedly retried by the alarm.
       await this.state.storage.delete(key);
       try {
         await processImageInstruction(
@@ -236,7 +250,7 @@ export class ChatSession {
   async fetch(request) {
     const url = new URL(request.url);
 
-    // Dedupe update_id Telegram (Telegram mengirim ulang kalau webhook lambat).
+    // Dedupe Telegram update_id (Telegram resends if the webhook is slow).
     if (url.pathname === "/seen" && request.method === "POST") {
       const { updateId } = await request.json();
       const last = (await this.state.storage.get("lastUpdateId")) || 0;
@@ -249,7 +263,7 @@ export class ChatSession {
       return Response.json({ duplicate: false });
     }
 
-    // Antrikan job; diproses di alarm().
+    // Enqueue job; processed in alarm().
     if (url.pathname === "/job" && request.method === "POST") {
       const job = await request.json();
       await this.state.storage.put(`job:${Date.now()}:${Math.random().toString(36).slice(2)}`, job);
@@ -260,7 +274,7 @@ export class ChatSession {
       return new Response("OK");
     }
 
-    // Mode (image / video) — persisten, tidak kena TTL foto.
+    // Mode (image / video) — persistent, not affected by photo TTL.
     if (url.pathname === "/mode") {
       if (request.method === "PUT") {
         const body = await request.json();
@@ -302,15 +316,15 @@ export class ChatSession {
   }
 }
 
-// Ambil stub Durable Object untuk chat tertentu
+// Get the Durable Object stub for a specific chat
 function getChatSessionStub(env, chatId) {
   if (!env.CHAT_SESSION) return null;
   const id = env.CHAT_SESSION.idFromName(String(chatId));
   return env.CHAT_SESSION.get(id);
 }
 
-// Tambahkan satu fileId ke daftar foto yang sedang ditampung untuk chat ini.
-// Mengembalikan daftar fileIds terbaru (setelah ditambahkan, dan sudah dipotong ke MAX_IMAGES).
+// Add one fileId to the list of photos currently being collected for this chat.
+// Returns the latest list of fileIds (after being added, and already trimmed to MAX_IMAGES).
 async function sessionAddPending(env, chatId, fileId, maxImages) {
   const stub = getChatSessionStub(env, chatId);
   if (!stub) throw new Error("CHAT_SESSION binding is missing");
@@ -352,7 +366,7 @@ async function sessionDeletePending(env, chatId) {
   });
 }
 
-// Ambil mode aktif untuk chat ini: "image" (default, edit foto) atau "video" (image-to-video).
+// Get the active mode for this chat: "image" (default, edit photo) or "video" (image-to-video).
 async function sessionGetMode(env, chatId) {
   const stub = getChatSessionStub(env, chatId);
   if (!stub) return "image";
@@ -367,7 +381,7 @@ async function sessionGetMode(env, chatId) {
   }
 }
 
-// Set mode aktif untuk chat ini.
+// Set the active mode for this chat.
 async function sessionSetMode(env, chatId, mode) {
   const stub = getChatSessionStub(env, chatId);
   if (!stub) throw new Error("CHAT_SESSION binding is missing");
@@ -406,7 +420,7 @@ async function sessionIsDuplicateUpdate(env, chatId, updateId) {
   }
 }
 
-// Ambil file_id gambar dari sebuah message (photo atau document bergambar)
+// Get the image file_id from a message (photo or image document)
 function extractFileId(msg) {
   if (!msg) return null;
   if (Array.isArray(msg.photo) && msg.photo.length > 0) {
@@ -437,7 +451,7 @@ export default {
       });
     }
 
-    // SEMENTARA: endpoint debug. HAPUS setelah selesai tes.
+    // TEMPORARY: debug endpoint. DELETE after testing is done.
     if (request.method === "GET" && url.pathname === "/debug-jerouter") {
       const base = (env.JEROUTER_BASE_URL || "https://je.jerouter.web.id/v1").replace(/\/$/, "");
       const model = env.JEROUTER_MODEL || "qwen3.8-27b-unsencored";
@@ -550,10 +564,10 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "👋 Welcome to Prompt Vision Bot!\n\n" +
-      "🖼️ Mode default: EDIT FOTO. Kirim foto referensi, lalu kirim instruksi editnya dalam Bahasa Indonesia — aku hasilkan prompt image-editing detail dalam Bahasa Inggris.\n\n" +
-      "🎬 Mode VIDEO: ketik /video untuk beralih. Kirim foto referensi + instruksi, aku hasilkan prompt image-to-video per scene (movement, camera, lighting) yang tetap menjaga karakter/identitas dari foto.\n\n" +
-      "🔒 Karakter yang sudah dikunci: <b>Lavanya Asmara</b> (body proportion & identity lock aktif).\n\n" +
-      "Ketik /help untuk detail lengkap."
+      "🖼️ Default mode: EDIT PHOTO. Send reference photos, then send the editing instructions in Indonesian — I will produce detailed English image-editing prompts.\n\n" +
+      "🎬 VIDEO mode: type /video to switch. Send reference photos + instructions, I will produce per-scene image-to-video prompts (movement, camera, lighting) that keep the character/identity from the photo consistent.\n\n" +
+      "🔒 Main character locked: identity & body lock active based on canonical reference photos (no name — matched purely through facial features and body proportions).\n\n" +
+      "Type /help for full details."
     );
 
     console.log("START_RECEIVED", chatId);
@@ -566,15 +580,15 @@ async function handleTelegramUpdate(update, env) {
       env,
       chatId,
       "📖 How to use:\n\n" +
-      "🖼️ MODE EDIT FOTO (default):\n" +
+      "🖼️ PHOTO EDIT MODE (default):\n" +
       "1. Send one or more reference photos (one message at a time).\n" +
       "2. Send your instructions in Indonesian.\n" +
       "3. I will analyze all the photos together as one scene and generate one detailed English image-editing prompt.\n\n" +
-      "🎬 MODE VIDEO (image-to-video):\n" +
-      "1. Ketik /video untuk masuk mode ini (sekali diset, tetap aktif sampai kamu ganti lagi).\n" +
-      "2. Kirim foto referensi + instruksi (gerakan, mood, durasi/jumlah scene kalau mau spesifik).\n" +
-      "3. Aku hasilkan prompt image-to-video detail per scene: pergerakan subjek, camera movement, lighting, atmosphere — sambil menjaga wajah, outfit, dan identitas dari foto tetap konsisten di semua scene.\n" +
-      "4. Ketik /image untuk kembali ke mode edit foto.\n\n" +
+      "🎬 VIDEO MODE (image-to-video):\n" +
+      "1. Type /video to enter this mode (once set, it stays active until you change it again).\n" +
+      "2. Send reference photos + instructions (movement, mood, duration/number of scenes if you want to be specific).\n" +
+      "3. I will produce detailed per-scene image-to-video prompts: subject movement, camera movement, lighting, atmosphere — while keeping the face, outfit, and identity from the photo consistent across all scenes.\n" +
+      "4. Type /image to return to photo edit mode.\n\n" +
       "You can also send a photo with the instruction as its caption to process it right away.\n\n" +
       `Maximum ${Number(env.MAX_IMAGES_PER_SCENE || DEFAULT_MAX_IMAGES)} photos per scene. Send /reset to clear photos you've already sent.`
     );
@@ -583,7 +597,7 @@ async function handleTelegramUpdate(update, env) {
     return;
   }
 
-  // /video - beralih ke mode image-to-video
+  // /video - switch to image-to-video mode
   if (typeof message.text === "string" && message.text.startsWith("/video")) {
     try {
       await sessionSetMode(env, chatId, "video");
@@ -594,17 +608,17 @@ async function handleTelegramUpdate(update, env) {
     await telegramSendMessage(
       env,
       chatId,
-      "🎬 Mode VIDEO aktif.\n\n" +
-      "Kirim foto referensi, lalu tulis instruksi video kamu (gerakan, mood, camera movement, durasi/jumlah scene kalau mau spesifik — boleh dalam Bahasa Indonesia).\n\n" +
-      "Aku akan hasilkan prompt image-to-video detail per scene (movement, camera, lighting) dalam Bahasa Inggris, siap dipakai di tool image-to-video AI (Kling, Runway, Luma, Pika, dll), sambil menjaga karakter/identitas dari foto tetap konsisten.\n\n" +
-      "Ketik /image untuk kembali ke mode edit foto."
+      "🎬 VIDEO mode active.\n\n" +
+      "Send reference photos, then write your video instructions (movement, mood, camera movement, duration/number of scenes if you want to be specific — can be in Indonesian).\n\n" +
+      "I will produce detailed per-scene image-to-video prompts (movement, camera, lighting) in English, ready to use in AI image-to-video tools (Kling, Runway, Luma, Pika, etc), while keeping the character/identity from the photo consistent.\n\n" +
+      "Type /image to return to photo edit mode."
     );
 
     console.log("MODE_SET_VIDEO", chatId);
     return;
   }
 
-  // /image - kembali ke mode edit foto
+  // /image - return to photo edit mode
   if (typeof message.text === "string" && message.text.startsWith("/image")) {
     try {
       await sessionSetMode(env, chatId, "image");
@@ -615,7 +629,7 @@ async function handleTelegramUpdate(update, env) {
     await telegramSendMessage(
       env,
       chatId,
-      "🖼️ Mode EDIT FOTO aktif. Kirim foto referensi, lalu instruksi perubahan yang kamu mau."
+      "🖼️ PHOTO EDIT mode active. Send reference photos, then the changes you want."
     );
 
     console.log("MODE_SET_IMAGE", chatId);
@@ -723,9 +737,9 @@ async function handleTelegramUpdate(update, env) {
       length: instruction.length
     });
 
-    // Jalur 1: user me-reply foto -> proses foto itu saja, tidak butuh storage.
-    // Ini adalah override eksplisit, jadi batch foto yang sedang ditampung
-    // (kalau ada) dibersihkan supaya tidak ikut tercampur di instruksi berikutnya.
+    // Path 1: user replies to a photo -> process only that photo, no storage needed.
+    // This is an explicit override, so the batch of photos currently being collected
+    // (if any) is cleared so they don't get mixed into the next instruction.
     const repliedFileId = extractFileId(message.reply_to_message);
     if (repliedFileId) {
       const modeForReply = await sessionGetMode(env, chatId);
@@ -751,8 +765,8 @@ async function handleTelegramUpdate(update, env) {
         await telegramSendMessage(
           env,
           chatId,
-          "📷 Kirim foto referensi terlebih dahulu, lalu tulis instruksi perubahan.\n\n" +
-          "Kamu bisa kirim lebih dari satu foto untuk satu scene, atau me-reply foto yang sudah dikirim dengan instruksimu."
+          "📷 Send reference photos first, then write the changes.\n\n" +
+          "You can send more than one photo for one scene, or reply to a photo that has already been sent with your instructions."
         );
 
         return;
@@ -806,17 +820,17 @@ async function processImageInstruction(
     const model = env.JEROUTER_MODEL || "step-5-unrestricted";
     const fallback = env.JEROUTER_FALLBACK_MODEL || "";
 
-    // Pesan status awal
+    // Initial status message
     await telegramSendMessage(
       env,
       chatId,
       isVideo
         ? (ids.length > 1
-            ? `🎬 Memproses ${ids.length} foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
-            : "🎬 Memproses foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram")
+            ? `🎬 Processing ${ids.length} reference photos...\n\n⏳ Step 1/3 — Downloading photos from Telegram`
+            : "🎬 Processing reference photo...\n\n⏳ Step 1/3 — Downloading photo from Telegram")
         : (ids.length > 1
-            ? `🔍 Memproses ${ids.length} foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram`
-            : "🔍 Memproses foto referensi...\n\n⏳ Langkah 1/3 — Mengunduh foto dari Telegram")
+            ? `🔍 Processing ${ids.length} reference photos...\n\n⏳ Step 1/3 — Downloading photos from Telegram`
+            : "🔍 Processing reference photo...\n\n⏳ Step 1/3 — Downloading photo from Telegram")
     );
 
     console.log("TELEGRAM_FILE_REQUEST", {
@@ -839,11 +853,11 @@ async function processImageInstruction(
       totalBytes: imageDataUrls.reduce((sum, u) => sum + u.length, 0)
     });
 
-    // Status: foto sudah diunduh, sekarang kirim ke AI
+    // Status: photos downloaded, now sending to AI
     await telegramSendMessage(
       env,
       chatId,
-      `✅ Langkah 1/3 selesai — ${ids.length} foto diunduh (${totalKB} KB total)\n\n⏳ Langkah 2/3 — Mengirim ke model AI\n🤖 Model: ${model}${fallback ? ` (cadangan: ${fallback})` : ""}`
+      `✅ Step 1/3 done — ${ids.length} photos downloaded (${totalKB} KB total)\n\n⏳ Step 2/3 — Sending to AI model\n🤖 Model: ${model}${fallback ? ` (backup: ${fallback})` : ""}`
     );
 
     console.log("JEROUTER_REQUEST", {
@@ -864,11 +878,11 @@ async function processImageInstruction(
       mode
     });
 
-    // Status: AI selesai, sekarang kirim hasilnya
+    // Status: AI finished, now sending the result
     await telegramSendMessage(
       env,
       chatId,
-      `✅ Langkah 2/3 selesai — AI selesai berpikir (${countWords(prompt)} kata)\n\n⏳ Langkah 3/3 — Mengirim prompt ke kamu`
+      `✅ Step 2/3 done — AI finished thinking (${countWords(prompt)} words)\n\n⏳ Step 3/3 — Sending the prompt to you`
     );
 
     await sendLongTelegramMessage(
@@ -978,8 +992,8 @@ async function downloadTelegramImage(env, fileId) {
     throw new Error("Image is too large");
   }
 
-  // Jangan percaya header content-type dari Telegram (bisa "application/octet-stream").
-  // Deteksi dari magic bytes supaya data URL selalu valid untuk model vision.
+  // Do not trust the content-type header from Telegram (it can be "application/octet-stream").
+  // Detect from magic bytes so the data URL is always valid for the vision model.
   const contentType = detectImageMime(
     arrayBuffer,
     imageResponse.headers.get("content-type")
@@ -1030,10 +1044,10 @@ function countWords(text) {
   return matches ? matches.length : 0;
 }
 
-// Pisahkan output model jadi { main, negative }.
-// Model diinstruksikan selalu mengakhiri dengan baris "Negative prompt: ...".
-// Kalau baris itu tidak ada (model lupa format), negative dikosongkan dan
-// seluruh teks dianggap main prompt supaya tidak ada data yang hilang.
+// Split the model output into { main, negative }.
+// The model is instructed to always end with the line "Negative prompt: ...".
+// If that line is missing (the model forgot the format), negative is left empty and
+// the entire text is treated as the main prompt so that no data is lost.
 function splitPromptAndNegative(text) {
   const raw = String(text || "").trim();
   const match = raw.match(/(^|\n)\s*Negative prompt\s*:\s*/i);
@@ -1054,7 +1068,7 @@ function joinPromptAndNegative(main, negative) {
   return `${main}\n\nNegative prompt: ${negative}`;
 }
 
-// Potong ke batas kata maksimum, usahakan berhenti di akhir kalimat.
+// Trim to the maximum word limit, try to stop at the end of a sentence.
 function trimToMaxWords(text, maxWords) {
   const words = text.trim().split(/\s+/);
   if (words.length <= maxWords) return text.trim();
@@ -1067,7 +1081,7 @@ function trimToMaxWords(text, maxWords) {
     cut.endsWith(".") ? cut.length - 1 : -1
   );
 
-  // Hanya potong di batas kalimat jika tidak membuang terlalu banyak
+  // Only cut at a sentence boundary if it doesn't throw away too much
   if (lastEnd > cut.length * 0.7) {
     return cut.slice(0, lastEnd + 1).trim();
   }
@@ -1075,7 +1089,7 @@ function trimToMaxWords(text, maxWords) {
   return cut.trim();
 }
 
-// Minta model menghasilkan prompt 250-500 kata; retry jika di luar batas.
+// Ask the model to produce a 250-500 word prompt; retry if outside the limits.
 async function generatePromptWithinLimits(
   env,
   imageDataUrls,
@@ -1108,7 +1122,7 @@ async function generatePromptWithinLimits(
       return joinPromptAndNegative(main, negative);
     }
 
-    // Simpan kandidat terdekat dengan rentang sebagai cadangan
+    // Save the candidate closest to the range as a backup
     const distance = words < minWords ? minWords - words : words - maxWords;
     if (!best || distance < best.distance) {
       best = { main, negative, words, distance };
@@ -1123,15 +1137,15 @@ async function generatePromptWithinLimits(
     };
   }
 
-  // Semua percobaan gagal: pakai kandidat terbaik, potong main jika kelebihan
+  // All attempts failed: use the best candidate, trim main if too long
   const finalMain =
     best.words > maxWords ? trimToMaxWords(best.main, maxWords) : best.main;
 
   return joinPromptAndNegative(finalMain, best.negative);
 }
 
-// Minta model menghasilkan prompt image-to-video per scene ("Scene 1 (0-3s): ...")
-// diikuti "Negative prompt:". Retry jika format scene/negative belum terpenuhi.
+// Ask the model to produce a per-scene image-to-video prompt ("Scene 1 (0-3s): ...")
+// followed by "Negative prompt:". Retry if the scene/negative format is not yet met.
 async function generateVideoPrompt(env, imageDataUrls, instruction) {
   let feedback = null;
   let lastRawOutput = null;
@@ -1171,8 +1185,8 @@ async function generateVideoPrompt(env, imageDataUrls, instruction) {
     };
   }
 
-  // Semua percobaan gagal memenuhi format ketat: fallback ke best-effort split
-  // supaya user tetap dapat sesuatu yang bisa dipakai, bukan error kosong.
+  // All attempts failed to meet the strict format: fallback to best-effort split
+  // so the user still gets something usable, not an empty error.
   const { main, negative } = splitPromptAndNegative(lastRawOutput);
   return joinPromptAndNegative(main, negative || "");
 }
@@ -1253,14 +1267,14 @@ async function callJerouter(
 
   const requestBody = { model, messages };
 
-  // TEMPERATURE = "" atau "none" -> parameter temperature tidak dikirim
-  // (beberapa model reasoning menolak parameter ini).
+  // TEMPERATURE = "" atau "none" -> temperature parameter is not sent
+  // (some reasoning models reject this parameter).
   const tempRaw = env.TEMPERATURE === undefined ? "0.35" : String(env.TEMPERATURE).trim();
   if (tempRaw !== "" && tempRaw.toLowerCase() !== "none") {
     requestBody.temperature = Number(tempRaw);
   }
 
-  // MAX_TOKENS (opsional, di wrangler.toml [vars]) -> batasi panjang output.
+  // MAX_TOKENS (optional, in wrangler.toml [vars]) -> limit output length.
   const maxTokensRaw = env.MAX_TOKENS ? Number(env.MAX_TOKENS) : 0;
   if (maxTokensRaw > 0) {
     requestBody.max_tokens = maxTokensRaw;
@@ -1270,7 +1284,7 @@ async function callJerouter(
   const RETRYABLE_STATUS = new Set([429, 500, 502, 503, 504, 520, 522, 524]);
   const MAX_HTTP_RETRIES = 1;
 
-  // Daftar model: utama dulu, lalu cadangan (JEROUTER_FALLBACK_MODEL) bila timeout/error server.
+  // Model list: primary first, then fallback (JEROUTER_FALLBACK_MODEL) on timeout/server error.
   const modelList = [model];
   if (env.JEROUTER_FALLBACK_MODEL && env.JEROUTER_FALLBACK_MODEL !== model) {
     modelList.push(env.JEROUTER_FALLBACK_MODEL);
@@ -1309,7 +1323,7 @@ async function callJerouter(
       await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
     }
 
-    // Sukses -> selesai. Gagal server/timeout dan masih ada model cadangan -> coba model berikutnya.
+    // Success -> done. Server failure/timeout and a fallback model still exists -> try the next model.
     if (response && response.ok) break;
     if (m < modelList.length - 1) {
       console.warn("JEROUTER_FALLBACK", { from: modelList[m], to: modelList[m + 1], status: response?.status });
@@ -1322,8 +1336,8 @@ async function callJerouter(
     data = JSON.parse(rawText);
   } catch {
     throw new Error(
-      `Jerouter HTTP ${response.status} (bukan JSON): ${rawText.slice(0, 200)}. ` +
-      `Server AI sedang bermasalah, coba lagi sebentar lagi.`
+      `Jerouter HTTP ${response.status} (not JSON): ${rawText.slice(0, 200)}. ` +
+      `The AI server is having trouble, try again in a moment.`
     );
   }
 
