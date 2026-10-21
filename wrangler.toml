@@ -4,7 +4,7 @@ compatibility_date = "2026-09-24"
 
 [vars]
 JEROUTER_BASE_URL = "https://je.jerouter.web.id/v1"
-JEROUTER_MODEL = "step-5-unrestricted"
+JEROUTER_MODEL = "mimo-v2.6-flash-unrestricted"
 JEROUTER_FALLBACK_MODEL = "step-3.7-flash"
 TEMPERATURE = "0.35"
 MAX_TOKENS = "5000"
